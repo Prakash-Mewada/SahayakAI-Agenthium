@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { GraduationCap, BotMessageSquare, Library } from 'lucide-react';
+import { GraduationCap, BotMessageSquare, Library, ClipboardList } from 'lucide-react';
 import { ContentGenerator } from '@/components/app/content-generator';
 
 export default function Home() {
@@ -30,6 +30,12 @@ export default function Home() {
                           <SidebarMenuButton href="/" isActive>
                               <BotMessageSquare />
                               Create Content
+                          </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                          <SidebarMenuButton href="/worksheet">
+                              <ClipboardList />
+                              Worksheet Generator
                           </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>

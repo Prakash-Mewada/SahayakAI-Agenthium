@@ -10,9 +10,9 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { GraduationCap, BotMessageSquare, Library, ClipboardList } from 'lucide-react';
-import { ContentLibrary } from '@/components/app/content-library';
+import { WorksheetGenerator } from '@/components/app/worksheet-generator';
 
-export default function LibraryPage() {
+export default function WorksheetPage() {
   return (
     <SidebarProvider>
       <Sidebar>
@@ -33,13 +33,13 @@ export default function LibraryPage() {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/worksheet">
-                  <ClipboardList />
-                  Worksheet Generator
+              <SidebarMenuButton href="/worksheet" isActive>
+                <ClipboardList />
+                Worksheet Generator
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/library" isActive>
+              <SidebarMenuButton href="/library">
                 <Library />
                 Content Library
               </SidebarMenuButton>
@@ -52,12 +52,12 @@ export default function LibraryPage() {
           <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
             <h1 className="text-lg font-semibold md:text-xl">
-              Content Library
+              Worksheet Generator
             </h1>
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6">
-          <ContentLibrary />
+          <WorksheetGenerator />
         </main>
       </SidebarInset>
     </SidebarProvider>
