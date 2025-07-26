@@ -35,6 +35,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Mic, Loader2, Copy, Share2, Save, Download } from 'lucide-react';
 import { handleGenerateContent, generateDocx } from '@/app/actions';
+import { saveContentToHistory, getRecentContentHistory, HistoryItem } from '@/services/content-history';
 import jsPDF from 'jspdf';
 
 
@@ -112,6 +113,7 @@ export function ContentGenerator() {
   const [generatedContent, setGeneratedContent] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [recentHistory, setRecentHistory] = useState<HistoryItem[]>([]);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const form = useForm<FormData>({
@@ -124,8 +126,22 @@ export function ContentGenerator() {
     },
   });
 
-  // Effect to initialize Speech Recognition
+  const fetchRecentHistory = async () => {
+    try {
+      const history = await getRecentContentHistory(5);
+      setRecentHistory(history);
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to load recent history',
+      });
+    }
+  };
+
+  // Effect to initialize Speech Recognition and fetch history
   useEffect(() => {
+    fetchRecentHistory();
+
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognitionAPI) {
       const recognition = new SpeechRecognitionAPI();
@@ -221,12 +237,11 @@ export function ContentGenerator() {
     }
   };
 
-  const handleAddToLibrary = () => {
+  const handleAddToLibrary = async () => {
     try {
-      const savedContent = JSON.parse(localStorage.getItem('eduGeniusLibrary') || '[]');
-      savedContent.unshift({ id: Date.now(), content: generatedContent, date: new Date().toISOString() });
-      localStorage.setItem('eduGeniusLibrary', JSON.stringify(savedContent.slice(0, 50)));
+      await saveContentToHistory(generatedContent);
       toast({ title: 'Content added to library!' });
+      fetchRecentHistory(); // Refresh recent history
     } catch (e) {
       toast({ variant: 'destructive', title: 'Failed to add to library' });
     }
@@ -272,147 +287,165 @@ export function ContentGenerator() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-      <Card className="shadow-lg lg:col-span-2">
-        <CardHeader><CardTitle>Content Details</CardTitle></CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="contentIdea"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content Idea</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Textarea placeholder="e.g., Explain photosynthesis to a 5th grader" className="resize-none pr-12" rows={5} {...field} />
-                        <TooltipProvider><Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button type="button" size="icon" variant={isListening ? 'destructive' : 'outline'} onClick={toggleListen} className="absolute bottom-2 right-2 h-8 w-8">
-                                    <Mic className="h-4 w-4" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>{isListening ? 'Stop listening' : 'Start listening'}</TooltipContent>
-                        </Tooltip></TooltipProvider>
-                      </div>
-                    </FormControl>
-                    <FormDescription>Describe the topic. You can type or use the microphone.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="contentType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content Format</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+        <Card className="shadow-lg lg:col-span-2">
+          <CardHeader><CardTitle>Content Details</CardTitle></CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="contentIdea"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Content Idea</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a content format" />
-                        </SelectTrigger>
+                        <div className="relative">
+                          <Textarea placeholder="e.g., Explain photosynthesis to a 5th grader" className="resize-none pr-12" rows={5} {...field} />
+                          <TooltipProvider><Tooltip>
+                              <TooltipTrigger asChild>
+                                  <Button type="button" size="icon" variant={isListening ? 'destructive' : 'outline'} onClick={toggleListen} className="absolute bottom-2 right-2 h-8 w-8">
+                                      <Mic className="h-4 w-4" />
+                                  </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>{isListening ? 'Stop listening' : 'Start listening'}</TooltipContent>
+                          </Tooltip></TooltipProvider>
+                        </div>
                       </FormControl>
-                      <SelectContent>
-                        {contentTypes.map((type) => (
-                          <SelectItem key={type.id} value={type.id}>
-                            <TooltipProvider><Tooltip>
-                                <TooltipTrigger asChild><p>{type.label}</p></TooltipTrigger>
-                                <TooltipContent side="right"><p>{type.description}</p></TooltipContent>
-                            </Tooltip></TooltipProvider>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="length"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Length</FormLabel>
-                    <FormControl>
-                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid grid-cols-3 gap-2">
-                          {lengths.map((length) => (
-                            <FormItem key={length.id}>
-                              <FormControl><RadioGroupItem value={length.id} id={length.id} className="sr-only peer" /></FormControl>
-                              <FormLabel htmlFor={length.id} className="flex h-12 flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 text-center hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors">
-                                {length.label}
-                              </FormLabel>
-                            </FormItem>
+                      <FormDescription>Describe the topic. You can type or use the microphone.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contentType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Content Format</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a content format" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {contentTypes.map((type) => (
+                            <SelectItem key={type.id} value={type.id}>
+                              <TooltipProvider><Tooltip>
+                                  <TooltipTrigger asChild><p>{type.label}</p></TooltipTrigger>
+                                  <TooltipContent side="right"><p>{type.description}</p></TooltipContent>
+                              </Tooltip></TooltipProvider>
+                            </SelectItem>
                           ))}
-                        </RadioGroup>
-                      </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="language"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Language</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl><SelectTrigger><SelectValue placeholder="Select a language" /></SelectTrigger></FormControl>
-                      <SelectContent>
-                        {languages.map(lang => <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" disabled={isGenerating} className="w-full !mt-8">
-                {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : 'Generate Content'}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-      <div className="flex flex-col lg:col-span-3">
-        <Card className="flex h-full flex-col shadow-lg">
-          <CardHeader><CardTitle>Generated Content</CardTitle></CardHeader>
-          <CardContent className="flex-1">
-            <ScrollArea className="h-full rounded-md border bg-muted/30 p-4">
-              {isGenerating ? (
-                  <div className="flex h-full items-center justify-center text-muted-foreground">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                  </div>
-              ) : generatedContent ? (
-                <div className="text-sm" dangerouslySetInnerHTML={{ __html: formatContent(generatedContent) }} />
-              ) : (
-                <div className="flex h-full items-center justify-center text-center text-muted-foreground">
-                  <p>Your generated educational content will appear here.</p>
-                </div>
-              )}
-            </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="length"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Length</FormLabel>
+                      <FormControl>
+                          <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid grid-cols-3 gap-2">
+                            {lengths.map((length) => (
+                              <FormItem key={length.id}>
+                                <FormControl><RadioGroupItem value={length.id} id={length.id} className="sr-only peer" /></FormControl>
+                                <FormLabel htmlFor={length.id} className="flex h-12 flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 text-center hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors">
+                                  {length.label}
+                                </FormLabel>
+                              </FormItem>
+                            ))}
+                          </RadioGroup>
+                        </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="language"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Language</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder="Select a language" /></SelectTrigger></FormControl>
+                        <SelectContent>
+                          {languages.map(lang => <SelectItem key={lang.value} value={lang.value}>{lang.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" disabled={isGenerating} className="w-full !mt-8">
+                  {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : 'Generate Content'}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
-          {generatedContent && !isGenerating && (
-            <CardFooter className="flex justify-end gap-2">
-              <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleCopy}><Copy className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Copy</TooltipContent></Tooltip></TooltipProvider>
-              <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleShare}><Share2 className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Share</TooltipContent></Tooltip></TooltipProvider>
-              <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleAddToLibrary}><Save className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Add to Library</TooltipContent></Tooltip></TooltipProvider>
-              <DropdownMenu>
-                <TooltipProvider><Tooltip><TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="icon"><Download className="h-4 w-4" /></Button>
-                    </DropdownMenuTrigger>
-                </TooltipTrigger><TooltipContent>Download</TooltipContent></Tooltip></TooltipProvider>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={handleDownloadDOC}>Download as DOC</DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleDownloadPDF}>Download as PDF</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CardFooter>
-          )}
         </Card>
+
+        <div className="flex flex-col lg:col-span-3">
+          <Card className="flex h-full flex-col shadow-lg">
+            <CardHeader><CardTitle>Generated Content</CardTitle></CardHeader>
+            <CardContent className="flex-1">
+              <ScrollArea className="h-full rounded-md border bg-muted/30 p-4">
+                {isGenerating ? (
+                    <div className="flex h-full items-center justify-center text-muted-foreground">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                ) : generatedContent ? (
+                  <div className="text-sm" dangerouslySetInnerHTML={{ __html: formatContent(generatedContent) }} />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-center text-muted-foreground">
+                    <p>Your generated educational content will appear here.</p>
+                  </div>
+                )}
+              </ScrollArea>
+            </CardContent>
+            {generatedContent && !isGenerating && (
+              <CardFooter className="flex justify-end gap-2">
+                <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleCopy}><Copy className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Copy</TooltipContent></Tooltip></TooltipProvider>
+                <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleShare}><Share2 className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Share</TooltipContent></Tooltip></TooltipProvider>
+                <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleAddToLibrary}><Save className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Add to Library</TooltipContent></Tooltip></TooltipProvider>
+                <DropdownMenu>
+                  <TooltipProvider><Tooltip><TooltipTrigger asChild>
+                      <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="icon"><Download className="h-4 w-4" /></Button>
+                      </DropdownMenuTrigger>
+                  </TooltipTrigger><TooltipContent>Download</TooltipContent></Tooltip></TooltipProvider>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={handleDownloadDOC}>Download as DOC</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleDownloadPDF}>Download as PDF</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </CardFooter>
+            )}
+          </Card>
+        </div>
       </div>
+      {recentHistory.length > 0 && (
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Recent History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {recentHistory.map((item) => (
+                <div key={item.id} className="truncate rounded-md border p-2 text-sm">
+                  {item.content}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

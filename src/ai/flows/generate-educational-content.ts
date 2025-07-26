@@ -4,6 +4,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getContentHistory } from '@/services/content-history';
 
 
 const GenerateEducationalContentInputSchema = z.object({
@@ -28,19 +29,30 @@ export async function generateEducationalContent(input: GenerateEducationalConte
 const generateEducationalContentPrompt = ai.definePrompt({
   name: 'generateEducationalContentPrompt',
   input: {
-    schema: GenerateEducationalContentInputSchema,
+    schema: z.object({
+      contentIdea: z.string(),
+      contentType: z.string(),
+      language: z.string(),
+      length: z.string(),
+      history: z.array(z.string()),
+    }),
   },
   output: {
     schema: GenerateEducationalContentOutputSchema,
   },
   prompt: `You are an AI tool designed to generate educational content for teachers. You will be provided with a content idea, a content type, a language, and a desired length.
 
-  Based on this, generate the appropriate educational content in the specified language and of the specified length.
+  Use the provided history of previously generated content as context to improve your response and avoid repetition.
 
   Content Idea: {{{contentIdea}}}
   Content Type: {{{contentType}}}
   Length: {{{length}}}
   Language: {{{language}}}
+
+  History:
+  {{#each history}}
+  - {{{this}}}
+  {{/each}}
 
   Ensure the content is accurate, engaging, and suitable for students. Format the response nicely.
   `,
@@ -53,7 +65,13 @@ const generateEducationalContentFlow = ai.defineFlow(
     outputSchema: GenerateEducationalContentOutputSchema,
   },
   async input => {
-    const {output} = await generateEducationalContentPrompt(input);
+    const historyItems = await getContentHistory();
+    const history = historyItems.map(item => item.content);
+    
+    const {output} = await generateEducationalContentPrompt({
+      ...input,
+      history,
+    });
     return output!;
   }
 );
