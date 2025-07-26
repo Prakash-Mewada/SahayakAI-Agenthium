@@ -6,20 +6,20 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const MultipleChoiceQuestionSchema = z.object({
-  type: z.literal('multiple-choice'),
+  type: z.string().describe('The type of question, which is "multiple-choice".'),
   question: z.string(),
   options: z.array(z.string()),
   answer: z.string(),
 });
 
 const FillInTheBlanksQuestionSchema = z.object({
-  type: z.literal('fill-in-the-blanks'),
+  type: z.string().describe('The type of question, which is "fill-in-the-blanks".'),
   question: z.string().describe("The sentence with a blank, represented by '___'."),
   answer: z.string(),
 });
 
 const ShortAnswerQuestionSchema = z.object({
-  type: z.literal('short-answer'),
+  type: z.string().describe('The type of question, which is "short-answer".'),
   question: z.string(),
   answer: z.string(),
 });
