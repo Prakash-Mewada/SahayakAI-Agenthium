@@ -39,6 +39,12 @@ const GenerateWorksheetInputSchema = z.object({
     .describe('The difficulty level of the questions (e.g., Easy, Medium, Hard).'),
   language: z.string().describe('The language for the worksheet.'),
   curriculum: z.string().optional().describe('The curriculum to follow, if any.'),
+  imageDataUri: z
+    .string()
+    .optional()
+    .describe(
+      "An optional image of the worksheet topic, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    ),
 });
 export type GenerateWorksheetInput = z.infer<typeof GenerateWorksheetInputSchema>;
 
@@ -57,21 +63,31 @@ export type GenerateWorksheetOutput = z.infer<typeof GenerateWorksheetOutputSche
 export async function generateWorksheet(
   input: GenerateWorksheetInput
 ): Promise<GenerateWorksheetOutput> {
-  const prompt = `Generate a ${input.worksheetType} worksheet with ${input.questionCount} questions about "${input.topic}".
+  const promptParts = [
+    `Generate a ${input.worksheetType} worksheet with ${input.questionCount} questions about "${input.topic}".
     The difficulty should be ${input.difficulty}.
     The language should be ${input.language}.
-    ${input.curriculum ? `Follow the ${input.curriculum} curriculum.` : ''}
-    Provide a title for the worksheet and the questions in the specified format.`;
+    ${input.curriculum ? `Follow the ${input.curriculum} curriculum.` : ''}`,
+  ];
+
+  if (input.imageDataUri) {
+    promptParts.push('Use the following image as context for the worksheet.');
+    promptParts.push({ media: { url: input.imageDataUri } });
+  }
+
+  promptParts.push(
+    'Provide a title for the worksheet and the questions in the specified format.'
+  );
 
   const llmResponse = await ai.generate({
-    prompt: prompt,
+    prompt: promptParts.join('\n'),
     model: 'googleai/gemini-1.5-flash',
     output: {
       schema: GenerateWorksheetOutputSchema,
     },
     config: {
-      temperature: 0.8
-    }
+      temperature: 0.8,
+    },
   });
 
   return llmResponse.output as GenerateWorksheetOutput;

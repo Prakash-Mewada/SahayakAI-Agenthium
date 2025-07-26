@@ -38,7 +38,7 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import type { GenerateWorksheetOutput } from '@/ai/flows/generate-worksheet';
-import { Loader2, Mic, Save } from 'lucide-react';
+import { Loader2, Mic, Save, Paperclip, X } from 'lucide-react';
 
 const worksheetSchema = z.object({
   topic: z.string().min(1, 'Please enter a topic.'),
@@ -47,6 +47,7 @@ const worksheetSchema = z.object({
   questionCount: z.number().min(1).max(20),
   difficulty: z.string(),
   curriculum: z.string().optional(),
+  imageDataUri: z.string().optional(),
 });
 
 type WorksheetFormValues = z.infer<typeof worksheetSchema>;
@@ -97,6 +98,8 @@ export function WorksheetGenerator() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [attachedImage, setAttachedImage] = useState<string | null>(null);
 
   const form = useForm<WorksheetFormValues>({
     resolver: zodResolver(worksheetSchema),
@@ -107,6 +110,7 @@ export function WorksheetGenerator() {
       questionCount: 5,
       difficulty: 'Medium',
       curriculum: '',
+      imageDataUri: '',
     },
   });
 
@@ -136,6 +140,35 @@ export function WorksheetGenerator() {
       recognitionRef.current = recognition;
     }
   }, [form, toast]);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 4 * 1024 * 1024) {
+        toast({
+          variant: 'destructive',
+          title: 'Image too large',
+          description: 'Please upload an image smaller than 4MB.',
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUri = e.target?.result as string;
+        form.setValue('imageDataUri', dataUri);
+        setAttachedImage(dataUri);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    form.setValue('imageDataUri', undefined);
+    setAttachedImage(null);
+    if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
+  };
 
   const toggleListen = () => {
     if (!recognitionRef.current) {
@@ -253,21 +286,49 @@ export function WorksheetGenerator() {
                             placeholder="e.g., The basics of photosynthesis for 5th graders"
                             onBlur={handleSuggestion}
                           />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant={isListening ? 'destructive' : 'outline'}
-                            onClick={toggleListen}
-                            className="absolute bottom-2 right-2 h-8 w-8"
-                          >
-                            <Mic className="h-4 w-4" />
-                          </Button>
+                           <div className="absolute bottom-2 right-2 flex items-center gap-2">
+                            <Button
+                                type="button"
+                                size="icon"
+                                variant="outline"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="h-8 w-8"
+                            >
+                                <Paperclip className="h-4 w-4" />
+                            </Button>
+                            <Input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleImageUpload}
+                                className="hidden"
+                                accept="image/*"
+                            />
+                            <Button
+                                type="button"
+                                size="icon"
+                                variant={isListening ? 'destructive' : 'outline'}
+                                onClick={toggleListen}
+                                className="h-8 w-8"
+                            >
+                                <Mic className="h-4 w-4" />
+                            </Button>
+                           </div>
                         </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {attachedImage && (
+                    <div className="relative w-32 h-32">
+                        <img src={attachedImage} alt="Uploaded image" className="rounded-md w-full h-full object-cover"/>
+                        <Button type="button" size="icon" variant="destructive" onClick={removeImage} className="absolute -top-2 -right-2 h-6 w-6 rounded-full">
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
+
                 {suggestions.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {suggestions.map((s, i) => (
