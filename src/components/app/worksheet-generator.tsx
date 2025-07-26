@@ -38,7 +38,14 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import type { GenerateWorksheetOutput } from '@/ai/flows/generate-worksheet';
-import { Loader2, Mic, Save, Paperclip, X } from 'lucide-react';
+import { Loader2, Mic, Save, Paperclip, X, Eye, EyeOff } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+  } from "@/components/ui/accordion"
 
 const worksheetSchema = z.object({
   topic: z.string().min(1, 'Please enter a topic.'),
@@ -207,6 +214,7 @@ export function WorksheetGenerator() {
 
   const onSubmit = (values: WorksheetFormValues) => {
     startGeneration(async () => {
+      setWorksheet(null);
       const { worksheet, error } = await handleGenerateWorksheet(values);
       if (error) {
         toast({
@@ -221,45 +229,43 @@ export function WorksheetGenerator() {
   };
 
   const renderQuestion = (question: any, index: number) => {
-    switch (question.type) {
-      case 'multiple-choice':
-        return (
-          <div key={index} className="mb-4">
-            <p>
-              <strong>
-                {index + 1}. {question.question}
-              </strong>
-            </p>
-            <ul className="list-disc pl-5 mt-2">
-              {question.options.map((option: string, i: number) => (
-                <li key={i}>{option}</li>
-              ))}
-            </ul>
-          </div>
-        );
-      case 'fill-in-the-blanks':
-        return (
-          <div key={index} className="mb-4">
-            <p>
-              <strong>
-                {index + 1}. {question.question.replace('___', '__________')}
-              </strong>
-            </p>
-          </div>
-        );
-      case 'short-answer':
-        return (
-          <div key={index} className="mb-4">
-            <p>
-              <strong>
-                {index + 1}. {question.question}
-              </strong>
-            </p>
-          </div>
-        );
-      default:
-        return null;
+    const questionContent = () => {
+        switch (question.type) {
+            case 'multiple-choice':
+                return (
+                    <>
+                        <p><strong>{index + 1}. {question.question}</strong></p>
+                        <ul className="list-disc pl-5 mt-2">
+                            {question.options.map((option: string, i: number) => (
+                                <li key={i}>{option}</li>
+                            ))}
+                        </ul>
+                    </>
+                );
+            case 'fill-in-the-blanks':
+                return <p><strong>{index + 1}. {question.question.replace('___', '__________')}</strong></p>;
+            case 'short-answer':
+                return <p><strong>{index + 1}. {question.question}</strong></p>;
+            default:
+                return null;
+        }
     }
+
+    return (
+        <Accordion type="single" collapsible className="w-full mb-2" key={index}>
+            <AccordionItem value={`item-${index}`} className="border rounded-md px-4">
+                <AccordionTrigger>
+                    <div className="flex-1 text-left">
+                        {questionContent()}
+                    </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                    <Badge variant="secondary">Answer</Badge>
+                    <p className="p-2 bg-muted/50 rounded-md mt-1">{question.answer}</p>
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
+    );
   };
 
   return (
@@ -509,3 +515,5 @@ export function WorksheetGenerator() {
     </div>
   );
 }
+
+    
