@@ -162,6 +162,13 @@ export function VisualAidCreator() {
     }
   };
 
+  const removeImage = () => {
+    form.setValue('imageDataUri', undefined);
+    if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
+  }
+
   const onGenerate = async (values: VisualAidFormValues) => {
     startGeneration(async () => {
       setGeneratedVisual(null);
@@ -259,22 +266,24 @@ export function VisualAidCreator() {
     switch (currentStep) {
       case 1:
         return (
-          <Card className="w-full max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle>Create a New Visual Aid</CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="mb-6 text-muted-foreground">
-                Generate high-quality diagrams, infographics, charts, and presentations from your educational content using the power of AI.
-              </p>
-              <Button size="lg" onClick={() => setCurrentStep(2)}>Get Started</Button>
-            </CardContent>
-            <CardFooter>
-                <h3 className="text-lg font-semibold w-full text-left">Recent Creations</h3>
-                {/* Placeholder for recent creations */}
-                <div className="mt-4 text-sm text-muted-foreground">No recent creations yet.</div>
-            </CardFooter>
-          </Card>
+          <Form {...form}>
+            <Card className="w-full max-w-2xl mx-auto">
+              <CardHeader>
+                <CardTitle>Create a New Visual Aid</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="mb-6 text-muted-foreground">
+                  Generate high-quality diagrams, infographics, charts, and presentations from your educational content using the power of AI.
+                </p>
+                <Button size="lg" onClick={() => setCurrentStep(2)}>Get Started</Button>
+              </CardContent>
+              <CardFooter>
+                  <h3 className="text-lg font-semibold w-full text-left">Recent Creations</h3>
+                  {/* Placeholder for recent creations */}
+                  <div className="mt-4 text-sm text-muted-foreground">No recent creations yet.</div>
+              </CardFooter>
+            </Card>
+          </Form>
         );
       case 2:
         return (
@@ -284,7 +293,7 @@ export function VisualAidCreator() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2"><FileText /> Content & Context</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="w-full space-y-6">
                 <FormField
                   control={form.control}
                   name="topic"
@@ -312,56 +321,44 @@ export function VisualAidCreator() {
                       <FormControl>
                         <div className="relative">
                             <Textarea {...field} rows={5} placeholder="Paste textbook snippets, curriculum notes, or other relevant text here to improve the AI's understanding." />
-                            <Button type="button" size="icon" variant={isListening === 'context' ? 'destructive' : 'outline'} onClick={() => toggleListen('context')} className="absolute bottom-2 right-2 h-8 w-8">
-                                <Mic className="h-4 w-4" />
-                            </Button>
+                            <div className="absolute bottom-2 right-2 flex items-center gap-2">
+                              <Input
+                                  type="file"
+                                  ref={fileInputRef}
+                                  onChange={handleImageUpload}
+                                  className="hidden"
+                                  accept="image/*"
+                              />
+                              <Button type="button" size="icon" variant='outline' onClick={() => fileInputRef.current?.click()} className="h-8 w-8">
+                                  <Upload className="h-4 w-4" />
+                              </Button>
+                              <Button type="button" size="icon" variant={isListening === 'context' ? 'destructive' : 'outline'} onClick={() => toggleListen('context')} className="h-8 w-8">
+                                  <Mic className="h-4 w-4" />
+                              </Button>
+                            </div>
                         </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                 <FormField
-                    control={form.control}
-                    name="imageDataUri"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Reference Image (Optional)</FormLabel>
-                        <FormControl>
-                            <>
-                            <Input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleImageUpload}
-                                className="hidden"
-                                accept="image/*"
-                            />
-                            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                                <Upload className="mr-2 h-4 w-4" /> Upload Image
-                            </Button>
-                            </>
-                        </FormControl>
-                        {form.getValues('imageDataUri') && (
-                            <div className="relative w-32 h-32 mt-2">
-                                <Image src={form.getValues('imageDataUri')!} alt="Reference" layout="fill" objectFit="cover" className="rounded-md" />
-                                <Button type="button" size="icon" variant="destructive" onClick={() => form.setValue('imageDataUri', undefined)} className="absolute -top-2 -right-2 h-6 w-6 rounded-full">
-                                    <X className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        )}
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
+                 {form.watch('imageDataUri') && (
+                    <div className="relative w-32 h-32 mt-2">
+                        <Image src={form.getValues('imageDataUri')!} alt="Reference" layout="fill" objectFit="cover" className="rounded-md" />
+                        <Button type="button" size="icon" variant="destructive" onClick={removeImage} className="absolute -top-2 -right-2 h-6 w-6 rounded-full">
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
                 </CardContent>
             </Card>
 
-            <div className="space-y-8">
+            <div className="w-full space-y-8">
                 <Card className="w-full">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Palette /> Format & Style</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="w-full space-y-6">
                     <FormField
                     control={form.control}
                     name="visualType"
@@ -397,7 +394,7 @@ export function VisualAidCreator() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Settings /> Advanced Settings</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="w-full space-y-6">
                     <FormField control={form.control} name="language" render={({ field }) => ( <FormItem><FormLabel>Language</FormLabel><FormControl><Input {...field} placeholder="e.g., English" /></FormControl><FormMessage /></FormItem> )} />
                     <FormField control={form.control} name="gradeLevel" render={({ field }) => ( <FormItem><FormLabel>Grade Level</FormLabel><FormControl><Input {...field} placeholder="e.g., 5th Grade" /></FormControl><FormMessage /></FormItem> )} />
                     <FormField control={form.control} name="curriculum" render={({ field }) => ( <FormItem><FormLabel>Curriculum (Optional)</FormLabel><FormControl><Input {...field} placeholder="e.g., CBSE, ICSE" /></FormControl><FormMessage /></FormItem> )} />
