@@ -342,16 +342,16 @@ export function WorksheetGenerator() {
                   name="questionCount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Number of Questions: {field.value}
-                      </FormLabel>
+                      <FormLabel>Number of Questions</FormLabel>
                       <FormControl>
-                        <Slider
+                        <Input
+                          type="number"
                           min={1}
                           max={20}
-                          step={1}
-                          defaultValue={[field.value]}
-                          onValueChange={(vals) => field.onChange(vals[0])}
+                          {...field}
+                          onChange={(event) =>
+                            field.onChange(+event.target.value)
+                          }
                         />
                       </FormControl>
                       <FormMessage />
