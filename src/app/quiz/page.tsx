@@ -11,9 +11,9 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { GraduationCap, BotMessageSquare, Library, ClipboardList, Image, ClipboardCheck } from 'lucide-react';
-import { VisualAidCreator } from '@/components/app/visual-aid-creator';
+import { QuizGenerator } from '@/components/app/quiz-generator';
 
-export default function VisualAidPage() {
+export default function QuizPage() {
   return (
     <SidebarProvider>
       <Sidebar>
@@ -35,18 +35,18 @@ export default function VisualAidPage() {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton href="/worksheet">
-                  <ClipboardList />
-                  Worksheet Generator
+                <ClipboardList />
+                Worksheet Generator
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarMenuButton href="/quiz">
+                <SidebarMenuButton href="/quiz" isActive>
                     <ClipboardCheck />
                     Quiz Generator
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarMenuButton href="/visual-aid" isActive>
+                <SidebarMenuButton href="/visual-aid">
                     <Image />
                     Visual Aid Creator
                 </SidebarMenuButton>
@@ -65,12 +65,12 @@ export default function VisualAidPage() {
           <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
             <h1 className="text-lg font-semibold md:text-xl">
-              Visual Aid Creator
+              Quiz Generator
             </h1>
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6">
-          <VisualAidCreator />
+          <QuizGenerator />
         </main>
       </SidebarInset>
     </SidebarProvider>
