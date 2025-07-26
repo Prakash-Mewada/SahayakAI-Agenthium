@@ -113,7 +113,6 @@ export function ContentGenerator() {
   const [generatedContent, setGeneratedContent] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [recentHistory, setRecentHistory] = useState<HistoryItem[]>([]);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const form = useForm<FormData>({
@@ -126,22 +125,8 @@ export function ContentGenerator() {
     },
   });
 
-  const fetchRecentHistory = () => {
-    try {
-      const history = JSON.parse(localStorage.getItem('eduGeniusLibrary') || '[]') as HistoryItem[];
-      setRecentHistory(history.slice(0, 5));
-    } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to load recent history',
-      });
-    }
-  };
-
-  // Effect to initialize Speech Recognition and fetch history
+  // Effect to initialize Speech Recognition
   useEffect(() => {
-    fetchRecentHistory();
-
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognitionAPI) {
       const recognition = new SpeechRecognitionAPI();
@@ -232,7 +217,6 @@ export function ContentGenerator() {
       if (!silent) {
         toast({ title: 'Content added to library!' });
       }
-      fetchRecentHistory(); // Refresh recent history
     } catch (e) {
       if (!silent) {
         toast({ variant: 'destructive', title: 'Failed to add to library' });
@@ -442,22 +426,6 @@ export function ContentGenerator() {
           </Card>
         </div>
       </div>
-      {recentHistory.length > 0 && (
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Recent History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {recentHistory.map((item) => (
-                <div key={item.id} className="truncate rounded-md border p-2 text-sm">
-                  {item.content}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
