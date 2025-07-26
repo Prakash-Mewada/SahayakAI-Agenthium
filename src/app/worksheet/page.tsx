@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { GraduationCap, BotMessageSquare, Library, ClipboardList } from 'lucide-react';
+import { GraduationCap, BotMessageSquare, Library, ClipboardList, Image } from 'lucide-react';
 import { WorksheetGenerator } from '@/components/app/worksheet-generator';
 
 export default function WorksheetPage() {
@@ -37,6 +37,12 @@ export default function WorksheetPage() {
                 <ClipboardList />
                 Worksheet Generator
               </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton href="/visual-aid">
+                    <Image />
+                    Visual Aid Creator
+                </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton href="/library">

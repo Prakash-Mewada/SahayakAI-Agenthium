@@ -10,9 +10,9 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { GraduationCap, BotMessageSquare, Library, ClipboardList, Image } from 'lucide-react';
-import { ContentLibrary } from '@/components/app/content-library';
+import { VisualAidCreator } from '@/components/app/visual-aid-creator';
 
-export default function LibraryPage() {
+export default function VisualAidPage() {
   return (
     <SidebarProvider>
       <Sidebar>
@@ -39,13 +39,13 @@ export default function LibraryPage() {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarMenuButton href="/visual-aid">
+                <SidebarMenuButton href="/visual-aid" isActive>
                     <Image />
                     Visual Aid Creator
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/library" isActive>
+              <SidebarMenuButton href="/library">
                 <Library />
                 Content Library
               </SidebarMenuButton>
@@ -58,12 +58,12 @@ export default function LibraryPage() {
           <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
             <h1 className="text-lg font-semibold md:text-xl">
-              Content Library
+              Visual Aid Creator
             </h1>
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6">
-          <ContentLibrary />
+          <VisualAidCreator />
         </main>
       </SidebarInset>
     </SidebarProvider>
