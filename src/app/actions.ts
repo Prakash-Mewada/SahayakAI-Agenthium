@@ -6,6 +6,7 @@ import {
   type GenerateEducationalContentInput,
 } from '@/ai/flows/generate-educational-content';
 import htmlToDocx from 'html-to-docx';
+import { saveContentToHistory } from '@/services/content-history';
 
 const formSchema = z.object({
   contentIdea: z.string().min(10, {
@@ -49,6 +50,7 @@ export async function handleGenerateContent(
   try {
     const input: GenerateEducationalContentInput = validatedFields.data;
     const result = await generateEducationalContent(input);
+    await saveContentToHistory(result.generatedContent);
     return { success: true, data: result };
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred while generating content.';

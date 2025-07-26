@@ -208,6 +208,8 @@ export function ContentGenerator() {
 
     if (result.success && result.data) {
       setGeneratedContent(result.data.generatedContent);
+      await saveContentToHistory(result.data.generatedContent);
+      fetchRecentHistory();
     } else {
       toast({
         variant: 'destructive',
