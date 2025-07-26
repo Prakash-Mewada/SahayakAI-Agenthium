@@ -11,8 +11,11 @@ const formSchema = z.object({
   contentIdea: z.string().min(10, {
     message: 'Content idea must be at least 10 characters.',
   }),
-  contentType: z.enum(['Story', 'Concept', 'Analogy'], {
+  contentType: z.enum(['Story', 'Concept', 'Analogy', 'Lesson', 'Example'], {
     required_error: 'You need to select a content type.',
+  }),
+  length: z.enum(['Short', 'Medium', 'Large'], {
+    required_error: 'You need to select a length.',
   }),
   language: z.string({
     required_error: 'Please select a language.',
@@ -31,6 +34,7 @@ export async function handleGenerateContent(
   const validatedFields = formSchema.safeParse({
     contentIdea: formData.get('contentIdea'),
     contentType: formData.get('contentType'),
+    length: formData.get('length'),
     language: formData.get('language'),
   });
 
@@ -67,7 +71,7 @@ export async function generateDocx(htmlContent: string): Promise<{
 
     return { success: true, data: (fileBuffer as Buffer).toString('base64') };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred while generating the DOC file.';
+    const errorMessage = error instanceof Error ? error.message : 'Failed to generate DOC file.';
     return { success: false, error: errorMessage };
   }
 }

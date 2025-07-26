@@ -8,8 +8,9 @@ import {z} from 'genkit';
 
 const GenerateEducationalContentInputSchema = z.object({
   contentIdea: z.string().describe('The educational content idea provided by the teacher.'),
-  contentType: z.enum(['Story', 'Concept', 'Analogy']).describe('The desired output format for the content.'),
+  contentType: z.enum(['Story', 'Concept', 'Analogy', 'Lesson', 'Example']).describe('The desired output format for the content.'),
   language: z.string().describe('The language in which the content should be generated.'),
+  length: z.enum(['Short', 'Medium', 'Large']).describe('The desired length of the content.'),
 });
 
 export type GenerateEducationalContentInput = z.infer<typeof GenerateEducationalContentInputSchema>;
@@ -32,12 +33,13 @@ const generateEducationalContentPrompt = ai.definePrompt({
   output: {
     schema: GenerateEducationalContentOutputSchema,
   },
-  prompt: `You are an AI tool designed to generate educational content for teachers. You will be provided with a content idea, a content type, and a language.
+  prompt: `You are an AI tool designed to generate educational content for teachers. You will be provided with a content idea, a content type, a language, and a desired length.
 
-  Based on this, generate the appropriate educational content in the specified language.
+  Based on this, generate the appropriate educational content in the specified language and of the specified length.
 
   Content Idea: {{{contentIdea}}}
   Content Type: {{{contentType}}}
+  Length: {{{length}}}
   Language: {{{language}}}
 
   Ensure the content is accurate, engaging, and suitable for students. Format the response nicely.

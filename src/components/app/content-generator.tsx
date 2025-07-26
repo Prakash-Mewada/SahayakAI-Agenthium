@@ -43,8 +43,11 @@ const formSchema = z.object({
   contentIdea: z.string().min(10, {
     message: 'Please provide a more detailed content idea (at least 10 characters).',
   }),
-  contentType: z.enum(['Story', 'Concept', 'Analogy'], {
+  contentType: z.enum(['Story', 'Concept', 'Analogy', 'Lesson', 'Example'], {
     required_error: 'You need to select a content type.',
+  }),
+  length: z.enum(['Short', 'Medium', 'Large'], {
+    required_error: 'You need to select a length for the content.',
   }),
   language: z.string({
     required_error: 'Please select a language.',
@@ -67,7 +70,15 @@ const contentTypes = [
   { id: 'Story', label: 'Story', description: 'Generates a narrative to explain the concept.' },
   { id: 'Concept', label: 'Concept', description: 'Provides a direct explanation of the topic.' },
   { id: 'Analogy', label: 'Analogy', description: 'Creates a comparison to a familiar idea.' },
+  { id: 'Lesson', label: 'Lesson', description: 'Creates an educational lesson plan.' },
+  { id: 'Example', label: 'Example', description: 'Provides an example of the concept.' },
 ];
+
+const lengths = [
+    { id: 'Short', label: 'Short' },
+    { id: 'Medium', label: 'Medium' },
+    { id: 'Large', label: 'Large' },
+]
 
 // SpeechRecognition types for browsers
 interface SpeechRecognition extends EventTarget {
@@ -108,6 +119,7 @@ export function ContentGenerator() {
     defaultValues: {
       contentIdea: '',
       contentType: 'Concept',
+      length: 'Medium',
       language: 'English',
     },
   });
@@ -294,27 +306,47 @@ export function ContentGenerator() {
                 control={form.control}
                 name="contentType"
                 render={({ field }) => (
-                  <FormItem className="space-y-3">
+                  <FormItem>
                     <FormLabel>Content Format</FormLabel>
-                    <TooltipProvider>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a content format" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {contentTypes.map((type) => (
+                          <SelectItem key={type.id} value={type.id}>
+                            <TooltipProvider><Tooltip>
+                                <TooltipTrigger asChild><p>{type.label}</p></TooltipTrigger>
+                                <TooltipContent side="right"><p>{type.description}</p></TooltipContent>
+                            </Tooltip></TooltipProvider>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="length"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Length</FormLabel>
+                    <FormControl>
                         <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="grid grid-cols-3 gap-2">
-                          {contentTypes.map((type) => (
-                            <FormItem key={type.id}>
-                              <FormControl><RadioGroupItem value={type.id} id={type.id} className="sr-only peer" /></FormControl>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <FormLabel htmlFor={type.id} className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 text-center hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors">
-                                    {type.label}
-                                  </FormLabel>
-                                </TooltipTrigger>
-                                <TooltipContent><p>{type.description}</p></TooltipContent>
-                              </Tooltip>
+                          {lengths.map((length) => (
+                            <FormItem key={length.id}>
+                              <FormControl><RadioGroupItem value={length.id} id={length.id} className="sr-only peer" /></FormControl>
+                              <FormLabel htmlFor={length.id} className="flex h-12 flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 text-center hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors">
+                                {length.label}
+                              </FormLabel>
                             </FormItem>
                           ))}
                         </RadioGroup>
                       </FormControl>
-                    </TooltipProvider>
                     <FormMessage />
                   </FormItem>
                 )}
