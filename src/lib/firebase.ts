@@ -6,12 +6,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  "projectId": "edugenius-5vnki",
+  "appId": "1:738235700341:web:051f5cf602405673c0143c",
+  "storageBucket": "edugenius-5vnki.firebasestorage.app",
+  "apiKey": "AIzaSyDeZesEX_f3XLV5Ac2fV3h_JiRWHJQuKHo",
+  "authDomain": "edugenius-5vnki.firebaseapp.com",
+  "messagingSenderId": "738235700341"
 };
 
 // Initialize Firebase
