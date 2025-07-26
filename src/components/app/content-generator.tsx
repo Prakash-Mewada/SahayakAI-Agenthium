@@ -34,9 +34,9 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { useToast } from '@/hooks/use-toast';
 import { Mic, Loader2, Copy, Share2, Save, Download } from 'lucide-react';
-import { handleGenerateContent } from '@/app/actions';
+import { handleGenerateContent, generateDocx } from '@/app/actions';
 import jsPDF from 'jspdf';
-import htmlToDocx from 'html-to-docx';
+
 
 // Define Zod schema for form validation
 const formSchema = z.object({
@@ -229,24 +229,24 @@ export function ContentGenerator() {
 
   const handleDownloadDOC = async () => {
     try {
-        const contentHtml = `<!DOCTYPE html><html><head><title>EduGenius Content</title></head><body>${generatedContent.replace(/\n/g, '<br />')}</body></html>`;
-        const fileBuffer = await htmlToDocx(contentHtml, undefined, {
-            table: { row: { cantSplit: true } },
-            footer: true,
-            pageNumber: true,
-        });
+        toast({ title: 'Generating DOC file...' });
+        const result = await generateDocx(generatedContent);
 
-        const blob = new Blob([fileBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'EduGenius_Content.docx';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        toast({ title: 'Downloading DOC...' });
+        if (result.success && result.data) {
+            const blob = new Blob([Buffer.from(result.data, 'base64')], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'EduGenius_Content.docx';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            toast({ title: 'Downloading DOC...' });
+        } else {
+            throw new Error(result.error);
+        }
     } catch (error) {
-        toast({ variant: 'destructive', title: 'Failed to generate DOC file.' });
+        const errorMessage = error instanceof Error ? error.message : 'Failed to generate DOC file.';
+        toast({ variant: 'destructive', title: 'Failed to generate DOC file.', description: errorMessage });
     }
   };
 

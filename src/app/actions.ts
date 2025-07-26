@@ -5,6 +5,7 @@ import {
   generateEducationalContent,
   type GenerateEducationalContentInput,
 } from '@/ai/flows/generate-educational-content';
+import htmlToDocx from 'html-to-docx';
 
 const formSchema = z.object({
   contentIdea: z.string().min(10, {
@@ -47,6 +48,26 @@ export async function handleGenerateContent(
     return { success: true, data: result };
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred while generating content.';
+    return { success: false, error: errorMessage };
+  }
+}
+
+export async function generateDocx(htmlContent: string): Promise<{
+  success: boolean;
+  data?: string;
+  error?: string;
+}> {
+  try {
+    const contentHtml = `<!DOCTYPE html><html><head><title>EduGenius Content</title></head><body>${htmlContent.replace(/\n/g, '<br />')}</body></html>`;
+    const fileBuffer = await htmlToDocx(contentHtml, undefined, {
+        table: { row: { cantSplit: true } },
+        footer: true,
+        pageNumber: true,
+    });
+
+    return { success: true, data: (fileBuffer as Buffer).toString('base64') };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred while generating the DOC file.';
     return { success: false, error: errorMessage };
   }
 }
