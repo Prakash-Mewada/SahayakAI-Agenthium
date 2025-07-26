@@ -58,7 +58,7 @@ export async function generateDocx(htmlContent: string): Promise<{
   error?: string;
 }> {
   try {
-    const contentHtml = `<!DOCTYPE html><html><head><title>EduGenius Content</title></head><body>${htmlContent.replace(/\n/g, '<br />')}</body></html>`;
+    const contentHtml = `<!DOCTYPE html><html><head><title>EduGenius Content</title></head><body>${htmlContent}</body></html>`;
     const fileBuffer = await htmlToDocx(contentHtml, undefined, {
         table: { row: { cantSplit: true } },
         footer: true,

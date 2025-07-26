@@ -87,6 +87,15 @@ declare global {
   }
 }
 
+function formatContent(text: string) {
+  let html = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+  html = html.replace(/\n/g, '<br />');
+
+  return html;
+}
+
 export function ContentGenerator() {
   const { toast } = useToast();
   const [generatedContent, setGeneratedContent] = useState<string>('');
@@ -213,7 +222,7 @@ export function ContentGenerator() {
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
-    const contentHtml = `<div style="font-family: Arial, sans-serif; line-height: 1.6;">${generatedContent.replace(/\n/g, '<br />')}</div>`;
+    const contentHtml = `<div style="font-family: Arial, sans-serif; line-height: 1.6;">${formatContent(generatedContent)}</div>`;
 
     doc.html(contentHtml, {
         callback: function (doc) {
@@ -230,7 +239,7 @@ export function ContentGenerator() {
   const handleDownloadDOC = async () => {
     try {
         toast({ title: 'Generating DOC file...' });
-        const result = await generateDocx(generatedContent);
+        const result = await generateDocx(formatContent(generatedContent));
 
         if (result.success && result.data) {
             const blob = new Blob([Buffer.from(result.data, 'base64')], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
@@ -344,7 +353,7 @@ export function ContentGenerator() {
                     <Loader2 className="h-8 w-8 animate-spin" />
                   </div>
               ) : generatedContent ? (
-                <p className="whitespace-pre-wrap text-sm">{generatedContent}</p>
+                <div className="text-sm" dangerouslySetInnerHTML={{ __html: formatContent(generatedContent) }} />
               ) : (
                 <div className="flex h-full items-center justify-center text-center text-muted-foreground">
                   <p>Your generated educational content will appear here.</p>
