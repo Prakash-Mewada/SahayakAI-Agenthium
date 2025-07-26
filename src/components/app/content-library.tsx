@@ -6,21 +6,28 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getContentHistory, deleteContentFromHistory, HistoryItem } from '@/services/content-history';
+
+export interface HistoryItem {
+  id: string;
+  content: string;
+  date: string;
+}
 
 export function ContentLibrary() {
   const { toast } = useToast();
   const [library, setLibrary] = useState<HistoryItem[]>([]);
 
-  const fetchLibrary = async () => {
+  const fetchLibrary = () => {
     try {
-      const savedContent = await getContentHistory();
-      setLibrary(savedContent);
+      const savedContent = localStorage.getItem('eduGeniusLibrary');
+      if (savedContent) {
+        setLibrary(JSON.parse(savedContent));
+      }
     } catch (e) {
       toast({
         variant: 'destructive',
         title: 'Failed to load library',
-        description: 'Could not retrieve saved content from Firebase.',
+        description: 'Could not retrieve saved content from local storage.',
       });
     }
   };
@@ -29,10 +36,11 @@ export function ContentLibrary() {
     fetchLibrary();
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     try {
-      await deleteContentFromHistory(id);
-      setLibrary(library.filter(item => item.id !== id));
+      const updatedLibrary = library.filter(item => item.id !== id);
+      setLibrary(updatedLibrary);
+      localStorage.setItem('eduGeniusLibrary', JSON.stringify(updatedLibrary));
       toast({ title: 'Content removed from library.' });
     } catch (e) {
       toast({

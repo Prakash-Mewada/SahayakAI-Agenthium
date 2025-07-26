@@ -4,7 +4,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { getContentHistory } from '@/services/content-history';
 
 
 const GenerateEducationalContentInputSchema = z.object({
@@ -65,8 +64,8 @@ const generateEducationalContentFlow = ai.defineFlow(
     outputSchema: GenerateEducationalContentOutputSchema,
   },
   async input => {
-    const historyItems = await getContentHistory();
-    const history = historyItems.map(item => item.content);
+    // Since we are using local storage now, we will pass an empty history.
+    const history: string[] = [];
     
     const {output} = await generateEducationalContentPrompt({
       ...input,

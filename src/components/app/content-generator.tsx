@@ -35,7 +35,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Mic, Loader2, Copy, Share2, Save, Download } from 'lucide-react';
 import { handleGenerateContent, generateDocx } from '@/app/actions';
-import { saveContentToHistory, getRecentContentHistory, HistoryItem } from '@/services/content-history';
+import type { HistoryItem } from '@/services/content-history';
 import jsPDF from 'jspdf';
 
 
@@ -126,10 +126,10 @@ export function ContentGenerator() {
     },
   });
 
-  const fetchRecentHistory = async () => {
+  const fetchRecentHistory = () => {
     try {
-      const history = await getRecentContentHistory(5);
-      setRecentHistory(history);
+      const history = JSON.parse(localStorage.getItem('eduGeniusLibrary') || '[]') as HistoryItem[];
+      setRecentHistory(history.slice(0, 5));
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -208,7 +208,7 @@ export function ContentGenerator() {
 
     if (result.success && result.data) {
       setGeneratedContent(result.data.generatedContent);
-      fetchRecentHistory();
+      handleAddToLibrary(result.data.generatedContent, true);
     } else {
       toast({
         variant: 'destructive',
@@ -217,6 +217,27 @@ export function ContentGenerator() {
       });
     }
     setIsGenerating(false);
+  };
+
+  const handleAddToLibrary = (content: string, silent = false) => {
+    try {
+      const newItem: HistoryItem = {
+        id: new Date().toISOString(),
+        content,
+        date: new Date().toISOString(),
+      };
+      const savedContent = JSON.parse(localStorage.getItem('eduGeniusLibrary') || '[]') as HistoryItem[];
+      savedContent.unshift(newItem);
+      localStorage.setItem('eduGeniusLibrary', JSON.stringify(savedContent.slice(0, 50)));
+      if (!silent) {
+        toast({ title: 'Content added to library!' });
+      }
+      fetchRecentHistory(); // Refresh recent history
+    } catch (e) {
+      if (!silent) {
+        toast({ variant: 'destructive', title: 'Failed to add to library' });
+      }
+    }
   };
 
   // Handlers for output actions
@@ -235,16 +256,6 @@ export function ContentGenerator() {
       }
     } else {
       toast({ variant: 'destructive', title: 'Share API not supported on this browser' });
-    }
-  };
-
-  const handleAddToLibrary = async () => {
-    try {
-      await saveContentToHistory(generatedContent);
-      toast({ title: 'Content added to library!' });
-      fetchRecentHistory(); // Refresh recent history
-    } catch (e) {
-      toast({ variant: 'destructive', title: 'Failed to add to library' });
     }
   };
 
@@ -414,7 +425,7 @@ export function ContentGenerator() {
               <CardFooter className="flex justify-end gap-2">
                 <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleCopy}><Copy className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Copy</TooltipContent></Tooltip></TooltipProvider>
                 <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleShare}><Share2 className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Share</TooltipContent></Tooltip></TooltipProvider>
-                <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleAddToLibrary}><Save className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Add to Library</TooltipContent></Tooltip></TooltipProvider>
+                <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={() => handleAddToLibrary(generatedContent)}><Save className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Add to Library</TooltipContent></Tooltip></TooltipProvider>
                 <DropdownMenu>
                   <TooltipProvider><Tooltip><TooltipTrigger asChild>
                       <DropdownMenuTrigger asChild>
@@ -450,5 +461,3 @@ export function ContentGenerator() {
     </div>
   );
 }
-
-    
