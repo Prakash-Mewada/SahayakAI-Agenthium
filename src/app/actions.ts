@@ -50,7 +50,8 @@ export async function handleGenerateContent(
   try {
     const input: GenerateEducationalContentInput = validatedFields.data;
     const result = await generateEducationalContent(input);
-    await saveContentToHistory(result.generatedContent);
+    // Don't wait for the save to complete before returning the content
+    saveContentToHistory(result.generatedContent);
     return { success: true, data: result };
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred while generating content.';
