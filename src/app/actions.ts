@@ -14,6 +14,21 @@ import {
     getWorksheetSuggestions,
     type GetWorksheetSuggestionsInput,
 } from '@/ai/flows/get-worksheet-suggestions';
+import {
+    generateVisualAid,
+    type GenerateVisualAidInput,
+    type GenerateVisualAidOutput,
+} from '@/ai/flows/generate-visual-aid';
+import {
+    getVisualAidSuggestions,
+    type GetVisualAidSuggestionsInput,
+    type GetVisualAidSuggestionsOutput,
+} from '@/ai/flows/get-visual-aid-suggestions';
+import {
+    refineVisualAid,
+    type RefineVisualAidInput,
+    type RefineVisualAidOutput,
+} from '@/ai/flows/refine-visual-aid';
 import htmlToDocx from 'html-to-docx';
 
 const formSchema = z.object({
@@ -104,6 +119,45 @@ export async function handleGenerateWorksheet(
     try {
       const worksheet = await generateWorksheet(input);
       return { worksheet };
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : 'An unknown error occurred.';
+      return { error: errorMessage };
+    }
+}
+
+export async function handleGenerateVisualAid(
+    input: GenerateVisualAidInput
+  ): Promise<{ visualAid?: GenerateVisualAidOutput; error?: string }> {
+    try {
+      const visualAid = await generateVisualAid(input);
+      return { visualAid };
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : 'An unknown error occurred.';
+      return { error: errorMessage };
+    }
+}
+
+export async function handleGetVisualAidSuggestions(
+    input: GetVisualAidSuggestionsInput
+  ): Promise<{ suggestions?: GetVisualAidSuggestionsOutput; error?: string }> {
+    try {
+      const suggestions = await getVisualAidSuggestions(input);
+      return { suggestions };
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : 'An unknown error occurred.';
+      return { error: errorMessage };
+    }
+}
+
+export async function handleRefineVisualAid(
+    input: RefineVisualAidInput
+  ): Promise<{ visualAid?: RefineVisualAidOutput; error?: string }> {
+    try {
+      const visualAid = await refineVisualAid(input);
+      return { visualAid };
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : 'An unknown error occurred.';
