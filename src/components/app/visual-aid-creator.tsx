@@ -382,10 +382,12 @@ export function VisualAidCreator() {
                     <FormField control={form.control} name="curriculum" render={({ field }) => ( <FormItem><FormLabel>Curriculum (Optional)</FormLabel><FormControl><Input {...field} placeholder="e.g., CBSE, ICSE" /></FormControl><FormMessage /></FormItem> )} />
                     </CardContent>
                 </Card>
-                <Button type="submit" size="lg" disabled={isGenerating} className="w-full">
-                    {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : 'Generate Visual Aid'}
-                </Button>
-                <Button type="button" variant="outline" onClick={() => setCurrentStep(1)}>Back</Button>
+                <div className="flex gap-4">
+                  <Button type="button" variant="outline" onClick={() => setCurrentStep(1)} className="w-full">Back</Button>
+                  <Button type="submit" size="lg" disabled={isGenerating} className="w-full">
+                      {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : 'Generate Visual Aid'}
+                  </Button>
+                </div>
             </div>
           </form>
           </Form>
