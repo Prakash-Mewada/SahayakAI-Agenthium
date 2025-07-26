@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { GraduationCap, BotMessageSquare, Library, ClipboardList, Image, ClipboardCheck } from 'lucide-react';
+import { GraduationCap, BotMessageSquare, Library, ClipboardList, Image, ClipboardCheck, HelpCircle } from 'lucide-react';
 import { VisualAidCreator } from '@/components/app/visual-aid-creator';
 
 export default function VisualAidPage() {
@@ -50,6 +50,12 @@ export default function VisualAidPage() {
                     <Image />
                     Visual Aid Creator
                 </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton href="/ask-me-anything">
+                <HelpCircle />
+                Ask Me Anything
+              </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton href="/library">

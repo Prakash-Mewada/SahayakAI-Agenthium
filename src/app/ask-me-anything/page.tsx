@@ -11,9 +11,9 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { GraduationCap, BotMessageSquare, Library, ClipboardList, Image, ClipboardCheck, HelpCircle } from 'lucide-react';
-import { WorksheetGenerator } from '@/components/app/worksheet-generator';
+import { AskMeAnything } from '@/components/app/ask-me-anything';
 
-export default function WorksheetPage() {
+export default function AskMeAnythingPage() {
   return (
     <SidebarProvider>
       <Sidebar>
@@ -34,7 +34,7 @@ export default function WorksheetPage() {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/worksheet" isActive>
+              <SidebarMenuButton href="/worksheet">
                 <ClipboardList />
                 Worksheet Generator
               </SidebarMenuButton>
@@ -52,7 +52,7 @@ export default function WorksheetPage() {
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/ask-me-anything">
+              <SidebarMenuButton href="/ask-me-anything" isActive>
                 <HelpCircle />
                 Ask Me Anything
               </SidebarMenuButton>
@@ -71,12 +71,12 @@ export default function WorksheetPage() {
           <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
             <h1 className="text-lg font-semibold md:text-xl">
-              Worksheet Generator
+              Ask Me Anything
             </h1>
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6">
-          <WorksheetGenerator />
+          <AskMeAnything />
         </main>
       </SidebarInset>
     </SidebarProvider>

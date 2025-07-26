@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { GraduationCap, BotMessageSquare, Library, ClipboardList, Image, ClipboardCheck } from 'lucide-react';
+import { GraduationCap, BotMessageSquare, Library, ClipboardList, Image, ClipboardCheck, HelpCircle } from 'lucide-react';
 import { ContentLibrary } from '@/components/app/content-library';
 
 export default function LibraryPage() {
@@ -50,6 +50,12 @@ export default function LibraryPage() {
                     <Image />
                     Visual Aid Creator
                 </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton href="/ask-me-anything">
+                <HelpCircle />
+                Ask Me Anything
+              </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton href="/library" isActive>
