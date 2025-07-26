@@ -260,8 +260,16 @@ export function WorksheetGenerator() {
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <Badge variant="secondary">Answer</Badge>
-                    <p className="p-2 bg-muted/50 rounded-md mt-1">{question.answer}</p>
+                    <div>
+                        <Badge variant="secondary">Answer</Badge>
+                        <p className="p-2 bg-muted/50 rounded-md mt-1">{question.answer}</p>
+                    </div>
+                    {question.explanation && (
+                        <div className="mt-2">
+                            <Badge variant="outline">Explanation</Badge>
+                            <p className="p-2 bg-muted/50 rounded-md mt-1 text-sm">{question.explanation}</p>
+                        </div>
+                    )}
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

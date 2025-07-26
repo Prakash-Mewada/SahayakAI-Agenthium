@@ -10,18 +10,21 @@ const MultipleChoiceQuestionSchema = z.object({
   question: z.string(),
   options: z.array(z.string()),
   answer: z.string(),
+  explanation: z.string().optional().describe('A brief, one-line explanation for the answer if needed.'),
 });
 
 const FillInTheBlanksQuestionSchema = z.object({
   type: z.string().describe('The type of question, which is "fill-in-the-blanks".'),
   question: z.string().describe("The sentence with a blank, represented by '___'."),
   answer: z.string(),
+  explanation: z.string().optional().describe('A brief, one-line explanation for the answer if needed.'),
 });
 
 const ShortAnswerQuestionSchema = z.object({
   type: z.string().describe('The type of question, which is "short-answer".'),
   question: z.string(),
   answer: z.string(),
+  explanation: z.string().optional().describe('A brief, one-line explanation for the answer if needed.'),
 });
 
 const GenerateWorksheetInputSchema = z.object({
@@ -76,7 +79,7 @@ export async function generateWorksheet(
   }
 
   promptParts.push(
-    'Provide a title for the worksheet and the questions in the specified format.'
+    'Provide a title for the worksheet and the questions in the specified format. If an answer requires an explanation, provide a brief, one-line explanation.'
   );
 
   const llmResponse = await ai.generate({
