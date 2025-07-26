@@ -80,8 +80,9 @@ export function VisualAidCreator() {
   const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [isListening, setIsListening] = useState(false);
+  const [isListening, setIsListening] = useState<'topic' | 'context' | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const form = useForm<VisualAidFormValues>({
     resolver: zodResolver(visualAidSchema),
@@ -101,35 +102,50 @@ export function VisualAidCreator() {
     if (SpeechRecognitionAPI) {
       const recognition = new SpeechRecognitionAPI();
       recognition.continuous = true;
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.lang = 'en-US';
 
       recognition.onresult = (event) => {
+        if(silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
         let transcript = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
             transcript += event.results[i][0].transcript;
-          }
         }
-        if (transcript) {
-            const currentVal = form.getValues('topic');
-            form.setValue('topic', (currentVal ? currentVal + ' ' : '') + transcript.trim());
+
+        if (isListening) {
+          const currentVal = form.getValues(isListening);
+          form.setValue(isListening, (currentVal ? currentVal + ' ' : '') + transcript);
         }
+
+        silenceTimerRef.current = setTimeout(() => {
+            toggleListen(null);
+        }, 2000);
       };
-      recognition.onerror = (event) => console.error('Speech recognition error', event.error);
-      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (event) => {
+        toast({ variant: 'destructive', title: 'Speech Recognition Error', description: event.error });
+        setIsListening(null);
+      }
+      recognition.onend = () => {
+        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current)
+        setIsListening(null);
+      };
       recognitionRef.current = recognition;
     }
-  }, [form]);
+  }, [form, toast, isListening]);
 
-  const toggleListen = () => {
+  const toggleListen = (field: 'topic' | 'context' | null) => {
     if (recognitionRef.current) {
-      if (isListening) {
-        recognitionRef.current.stop();
-      } else {
-        recognitionRef.current.start();
-      }
-      setIsListening(!isListening);
+        if (isListening === field && field !== null) {
+            recognitionRef.current.stop();
+        } else {
+            if (isListening) recognitionRef.current.stop();
+            if(field) {
+                recognitionRef.current.start();
+                setIsListening(field);
+            } else {
+                setIsListening(null)
+            }
+        }
     }
   };
 
@@ -263,8 +279,8 @@ export function VisualAidCreator() {
       case 2:
         return (
             <Form {...form}>
-            <form onSubmit={form.handleSubmit(onGenerate)} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card>
+            <form onSubmit={form.handleSubmit(onGenerate)} className="flex flex-col gap-8">
+            <Card className="w-full">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2"><FileText /> Content & Context</CardTitle>
                 </CardHeader>
@@ -278,7 +294,7 @@ export function VisualAidCreator() {
                       <FormControl>
                         <div className="relative">
                             <Textarea {...field} rows={3} placeholder="e.g., The water cycle" />
-                            <Button type="button" size="icon" variant={isListening ? 'destructive' : 'outline'} onClick={toggleListen} className="absolute bottom-2 right-2 h-8 w-8">
+                            <Button type="button" size="icon" variant={isListening === 'topic' ? 'destructive' : 'outline'} onClick={() => toggleListen('topic')} className="absolute bottom-2 right-2 h-8 w-8">
                                 <Mic className="h-4 w-4" />
                             </Button>
                         </div>
@@ -294,7 +310,12 @@ export function VisualAidCreator() {
                     <FormItem>
                       <FormLabel>Additional Context (Optional)</FormLabel>
                       <FormControl>
-                        <Textarea {...field} rows={5} placeholder="Paste textbook snippets, curriculum notes, or other relevant text here to improve the AI's understanding." />
+                        <div className="relative">
+                            <Textarea {...field} rows={5} placeholder="Paste textbook snippets, curriculum notes, or other relevant text here to improve the AI's understanding." />
+                            <Button type="button" size="icon" variant={isListening === 'context' ? 'destructive' : 'outline'} onClick={() => toggleListen('context')} className="absolute bottom-2 right-2 h-8 w-8">
+                                <Mic className="h-4 w-4" />
+                            </Button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -336,7 +357,7 @@ export function VisualAidCreator() {
             </Card>
 
             <div className="space-y-8">
-                <Card>
+                <Card className="w-full">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Palette /> Format & Style</CardTitle>
                     </CardHeader>
@@ -372,7 +393,7 @@ export function VisualAidCreator() {
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="w-full">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Settings /> Advanced Settings</CardTitle>
                     </CardHeader>
@@ -385,7 +406,7 @@ export function VisualAidCreator() {
                 <div className="flex gap-4">
                   <Button type="button" variant="outline" onClick={() => setCurrentStep(1)} className="w-full">Back</Button>
                   <Button type="submit" size="lg" disabled={isGenerating} className="w-full">
-                      {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : 'Generate Visual Aid'}
+                      {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</> : <><Sparkles className="mr-2 h-4 w-4" />Generate Visual Aid</>}
                   </Button>
                 </div>
             </div>
