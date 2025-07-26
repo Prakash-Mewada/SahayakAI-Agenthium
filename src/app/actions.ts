@@ -5,6 +5,15 @@ import {
   generateEducationalContent,
   type GenerateEducationalContentInput,
 } from '@/ai/flows/generate-educational-content';
+import {
+  generateWorksheet,
+  type GenerateWorksheetInput,
+  type GenerateWorksheetOutput,
+} from '@/ai/flows/generate-worksheet';
+import {
+    getWorksheetSuggestions,
+    type GetWorksheetSuggestionsInput,
+} from '@/ai/flows/get-worksheet-suggestions';
 import htmlToDocx from 'html-to-docx';
 
 const formSchema = z.object({
@@ -74,4 +83,30 @@ export async function generateDocx(htmlContent: string): Promise<{
     const errorMessage = error instanceof Error ? error.message : 'Failed to generate DOC file.';
     return { success: false, error: errorMessage };
   }
+}
+
+export async function handleGetSuggestions(
+    input: GetWorksheetSuggestionsInput
+  ): Promise<{ suggestions: string[]; error?: string }> {
+    try {
+      const { suggestions } = await getWorksheetSuggestions(input);
+      return { suggestions };
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : 'An unknown error occurred.';
+      return { suggestions: [], error: errorMessage };
+    }
+}
+  
+export async function handleGenerateWorksheet(
+    input: GenerateWorksheetInput
+): Promise<{ worksheet?: GenerateWorksheetOutput; error?: string }> {
+    try {
+      const worksheet = await generateWorksheet(input);
+      return { worksheet };
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : 'An unknown error occurred.';
+      return { error: errorMessage };
+    }
 }
