@@ -26,9 +26,17 @@ import {
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
 import { useToast } from '@/hooks/use-toast';
-import { Mic, Loader2, Copy, Share2, Save } from 'lucide-react';
+import { Mic, Loader2, Copy, Share2, Save, Download } from 'lucide-react';
 import { handleGenerateContent } from '@/app/actions';
+import jsPDF from 'jspdf';
+import htmlToDocx from 'html-to-docx';
 
 // Define Zod schema for form validation
 const formSchema = z.object({
@@ -192,14 +200,53 @@ export function ContentGenerator() {
     }
   };
 
-  const handleSaveOffline = () => {
+  const handleAddToLibrary = () => {
     try {
-      const savedContent = JSON.parse(localStorage.getItem('eduGeniusOffline') || '[]');
+      const savedContent = JSON.parse(localStorage.getItem('eduGeniusLibrary') || '[]');
       savedContent.unshift({ id: Date.now(), content: generatedContent, date: new Date().toISOString() });
-      localStorage.setItem('eduGeniusOffline', JSON.stringify(savedContent.slice(0, 50)));
-      toast({ title: 'Content saved for offline use!' });
+      localStorage.setItem('eduGeniusLibrary', JSON.stringify(savedContent.slice(0, 50)));
+      toast({ title: 'Content added to library!' });
     } catch (e) {
-      toast({ variant: 'destructive', title: 'Failed to save content' });
+      toast({ variant: 'destructive', title: 'Failed to add to library' });
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    const contentHtml = `<div style="font-family: Arial, sans-serif; line-height: 1.6;">${generatedContent.replace(/\n/g, '<br />')}</div>`;
+
+    doc.html(contentHtml, {
+        callback: function (doc) {
+            doc.save("EduGenius_Content.pdf");
+            toast({ title: 'Downloading PDF...' });
+        },
+        x: 10,
+        y: 10,
+        width: 180,
+        windowWidth: 800
+    });
+  };
+
+  const handleDownloadDOC = async () => {
+    try {
+        const contentHtml = `<!DOCTYPE html><html><head><title>EduGenius Content</title></head><body>${generatedContent.replace(/\n/g, '<br />')}</body></html>`;
+        const fileBuffer = await htmlToDocx(contentHtml, undefined, {
+            table: { row: { cantSplit: true } },
+            footer: true,
+            pageNumber: true,
+        });
+
+        const blob = new Blob([fileBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'EduGenius_Content.docx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast({ title: 'Downloading DOC...' });
+    } catch (error) {
+        toast({ variant: 'destructive', title: 'Failed to generate DOC file.' });
     }
   };
 
@@ -309,7 +356,18 @@ export function ContentGenerator() {
             <CardFooter className="flex justify-end gap-2">
               <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleCopy}><Copy className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Copy</TooltipContent></Tooltip></TooltipProvider>
               <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleShare}><Share2 className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Share</TooltipContent></Tooltip></TooltipProvider>
-              <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleSaveOffline}><Save className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Save Offline</TooltipContent></Tooltip></TooltipProvider>
+              <TooltipProvider><Tooltip><TooltipTrigger asChild><Button variant="outline" size="icon" onClick={handleAddToLibrary}><Save className="h-4 w-4" /></Button></TooltipTrigger><TooltipContent>Add to Library</TooltipContent></Tooltip></TooltipProvider>
+              <DropdownMenu>
+                <TooltipProvider><Tooltip><TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="icon"><Download className="h-4 w-4" /></Button>
+                    </DropdownMenuTrigger>
+                </TooltipTrigger><TooltipContent>Download</TooltipContent></Tooltip></TooltipProvider>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleDownloadDOC}>Download as DOC</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDownloadPDF}>Download as PDF</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </CardFooter>
           )}
         </Card>
