@@ -85,10 +85,8 @@ export function MainLayout({
     // Function to check connectivity status
     const checkOnlineStatus = () => {
       setIsOnline(navigator.onLine);
-      if (!navigator.onLine && window.location.pathname !== '/saved-library') {
-        const savedLibraryElement = document.querySelectorAll('.menu-item');
-        console.log('Offline mode',savedLibraryElement);
-        // window.location.href = '/saved-library';
+      if (!navigator.onLine && window.location.pathname !== '/library') {
+        window.location.href = '/library';
       }
     };
 
