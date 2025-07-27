@@ -137,22 +137,8 @@ export function AskMeAnything() {
   };
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-8rem)]">
-      <Card className="md:col-span-1 h-full flex flex-col">
-        <CardHeader>
-          <CardTitle>Past Conversations</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1 overflow-auto">
-          <ScrollArea className="h-full">
-            <div className="space-y-4">
-                {/* Placeholder for chat history items */}
-                <p className="text-sm text-muted-foreground">No past conversations yet.</p>
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
-
-      <Card className="md:col-span-2 h-full flex flex-col">
+    <div className="h-[calc(100vh-8rem)] flex justify-center items-center">
+      <Card className="w-full max-w-4xl h-full flex flex-col">
         <CardHeader>
           <CardTitle>Ask Me Anything</CardTitle>
         </CardHeader>
