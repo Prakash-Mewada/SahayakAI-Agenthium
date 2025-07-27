@@ -50,7 +50,6 @@ const navItems: {
   { slug: 'worksheet', href: '/worksheet', icon: <ClipboardList />, label: 'Worksheet Generator' },
   { slug: 'quiz', href: '/quiz', icon: <ClipboardCheck />, label: 'Quiz Generator' },
   { slug: 'visual-aid', href: '/visual-aid', icon: <Image />, label: 'Visual Aid Creator' },
-  { slug: 'ask-me-anything', href: '/ask-me-anything', icon: <HelpCircle />, label: 'Ask Me Anything' },
 ];
 
 const libraryItem = { slug: 'library' as PageSlug, href: '/library', icon: <Library />, label: 'Content Library' };
