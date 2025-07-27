@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -211,9 +212,9 @@ export function ContentGenerator() {
         content,
         date: new Date().toISOString(),
       };
-      const savedContent = JSON.parse(localStorage.getItem('eduGeniusLibrary') || '[]') as HistoryItem[];
+      const savedContent = JSON.parse(localStorage.getItem('sahayakLibrary') || '[]') as HistoryItem[];
       savedContent.unshift(newItem);
-      localStorage.setItem('eduGeniusLibrary', JSON.stringify(savedContent.slice(0, 50)));
+      localStorage.setItem('sahayakLibrary', JSON.stringify(savedContent.slice(0, 50)));
       if (!silent) {
         toast({ title: 'Content added to library!' });
       }
@@ -234,7 +235,7 @@ export function ContentGenerator() {
   const handleShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'EduGenius Content', text: generatedContent });
+        await navigator.share({ title: 'Sahayak Content', text: generatedContent });
       } catch (error) {
         toast({ variant: 'destructive', title: 'Error sharing content' });
       }
@@ -249,7 +250,7 @@ export function ContentGenerator() {
 
     doc.html(contentHtml, {
         callback: function (doc) {
-            doc.save("EduGenius_Content.pdf");
+            doc.save("Sahayak_Content.pdf");
             toast({ title: 'Downloading PDF...' });
         },
         x: 10,
@@ -268,7 +269,7 @@ export function ContentGenerator() {
             const blob = new Blob([Buffer.from(result.data, 'base64')], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'EduGenius_Content.docx';
+            link.download = 'Sahayak_Content.docx';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

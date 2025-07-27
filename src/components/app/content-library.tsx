@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,7 +20,7 @@ export function ContentLibrary() {
 
   const fetchLibrary = () => {
     try {
-      const savedContent = localStorage.getItem('eduGeniusLibrary');
+      const savedContent = localStorage.getItem('sahayakLibrary');
       if (savedContent) {
         setLibrary(JSON.parse(savedContent));
       }
@@ -40,7 +41,7 @@ export function ContentLibrary() {
     try {
       const updatedLibrary = library.filter(item => item.id !== id);
       setLibrary(updatedLibrary);
-      localStorage.setItem('eduGeniusLibrary', JSON.stringify(updatedLibrary));
+      localStorage.setItem('sahayakLibrary', JSON.stringify(updatedLibrary));
       toast({ title: 'Content removed from library.' });
     } catch (e) {
       toast({

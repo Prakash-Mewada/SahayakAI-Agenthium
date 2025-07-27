@@ -201,7 +201,7 @@ export function AskMeAnything() {
   }
 
   return (
-    <div className="h-[calc(100vh-6rem)] w-full">
+    <div className="h-full w-full">
         <div className="h-full flex flex-col">
             <Card className="flex-1 flex flex-col h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
@@ -236,7 +236,7 @@ export function AskMeAnything() {
                                 <div className="flex items-center gap-2 pt-1">
                                     <Loader2 className="h-5 w-5 animate-spin text-primary" />
                                     <span className="text-sm text-muted-foreground">Thinking...</span>
-                                d</div>
+                                </div>
                             </div>
                         )}
                     </ScrollArea>
