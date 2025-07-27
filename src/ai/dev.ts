@@ -10,3 +10,4 @@ import '@/ai/flows/get-visual-aid-suggestions.ts';
 import '@/ai/flows/refine-visual-aid.ts';
 import '@/ai/flows/generate-response';
 import '@/ai/flows/adjust-answer';
+import '@/ai/flows/generate-image';

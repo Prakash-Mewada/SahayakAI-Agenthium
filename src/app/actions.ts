@@ -32,6 +32,7 @@ import {
 import htmlToDocx from 'html-to-docx';
 import { adjustAnswer, type AdjustAnswerInput } from '@/ai/flows/adjust-answer';
 import type { Message } from '@/types';
+import { generateImage, type GenerateImageInput, type GenerateImageOutput } from '@/ai/flows/generate-image';
 
 
 const formSchema = z.object({
@@ -189,4 +190,17 @@ export const getResponse = async (messages: Message[]) => {
         throw new Error(await res.text())
     }
     return res.body;
+}
+
+export async function handleGenerateImage(
+  input: GenerateImageInput
+): Promise<{ image?: GenerateImageOutput; error?: string }> {
+  try {
+    const image = await generateImage(input);
+    return { image };
+  } catch (e) {
+    const errorMessage =
+      e instanceof Error ? e.message : 'An unknown error occurred.';
+    return { error: errorMessage };
+  }
 }
