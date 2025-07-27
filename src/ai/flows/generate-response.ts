@@ -2,7 +2,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { Message } from '@/types';
 import { streamFlow } from 'genkit/next';
 
 const GenerateResponseInputSchema = z.object({

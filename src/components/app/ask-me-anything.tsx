@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useTransition } from 'react';
@@ -5,6 +6,7 @@ import { useChat } from 'ai/react';
 import { v4 as uuidv4 } from 'uuid';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Loader2, Mic, X, ThumbsUp, ThumbsDown, RefreshCw, Download, Volume2, Bot, User } from 'lucide-react';
+import { Form } from '@/components/ui/form';
 import { ChatHistorySidebar } from './chat-history-sidebar';
 import { useToast } from '@/hooks/use-toast';
 import { useSpeechToText } from '@/hooks/use-speech-to-text';
@@ -50,6 +53,8 @@ export function AskMeAnything() {
   const { transcript, isListening, startListening, stopListening, resetTranscript } = useSpeechToText();
   const { currentlyPlaying, play, stop } = useTextToSpeech();
   const [isAdjusting, startTransition] = useTransition();
+
+  const form = useForm();
 
   const { messages, setMessages, input, setInput, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
@@ -229,7 +234,7 @@ export function AskMeAnything() {
                                 <p className="text-sm">Ask me anything about educational topics, lesson planning, or classroom activities.</p>
                             </div>
                         )}
-                        {isLoading && messages[messages.length -1].role === 'user' && (
+                        {isLoading && messages.length > 0 && messages[messages.length -1].role === 'user' && (
                             <div className="flex items-start gap-4 p-4">
                                 <Avatar className="h-8 w-8 border">
                                     <AvatarFallback><Bot size={18}/></AvatarFallback>
@@ -243,6 +248,7 @@ export function AskMeAnything() {
                     </ScrollArea>
                 </CardContent>
                 <CardFooter>
+                    <Form {...form}>
                     <form onSubmit={handleFormSubmit} className="w-full relative">
                         <Textarea
                             value={input}
@@ -274,9 +280,12 @@ export function AskMeAnything() {
                             </Button>
                         </div>
                     </form>
+                    </Form>
                 </CardFooter>
             </Card>
         </div>
     </div>
   );
 }
+
+    

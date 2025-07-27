@@ -3,13 +3,13 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
-export const AdjustAnswerInputSchema = z.object({
+const AdjustAnswerInputSchema = z.object({
   answer: z.string().describe("The AI's answer to be adjusted."),
   action: z.enum(['expand', 'simplify']).describe('The adjustment action to perform.'),
 });
 export type AdjustAnswerInput = z.infer<typeof AdjustAnswerInputSchema>;
 
-export const AdjustAnswerOutputSchema = z.object({
+const AdjustAnswerOutputSchema = z.object({
   adjustedAnswer: z.string().describe('The adjusted, new answer.'),
 });
 export type AdjustAnswerOutput = z.infer<typeof AdjustAnswerOutputSchema>;
