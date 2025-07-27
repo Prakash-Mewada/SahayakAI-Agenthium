@@ -1,54 +1,55 @@
 'use server';
 
-import { ai } from '@/ai/genkit';
-import { z } from 'zod';
-import { streamFlow } from '@genkit-ai/next/server';
+/**
+ * @fileOverview An AI agent that generates responses based on Retrieval-Augmented Generation (RAG).
+ *
+ * - generateRagBasedResponse - A function that generates a RAG-based response to a user question.
+ * - GenerateRagBasedResponseInput - The input type for the generateRagBasedResponse function.
+ * - GenerateRagBasedResponseOutput - The return type for the generateRagBasedResponse function.
+ */
 
-const GenerateResponseInputSchema = z.object({
-  history: z.array(
-    z.object({
-      role: z.enum(['user', 'assistant']),
-      content: z.string(),
-    })
-  ),
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+
+const GenerateRagBasedResponseInputSchema = z.object({
+  question: z.string().describe('The user question.'),
 });
-export type GenerateResponseInput = z.infer<typeof GenerateResponseInputSchema>;
+export type GenerateRagBasedResponseInput = z.infer<typeof GenerateRagBasedResponseInputSchema>;
 
-export async function generateResponse(input: GenerateResponseInput) {
-    return streamFlow(generateResponseFlow, input);
+const GenerateRagBasedResponseOutputSchema = z.object({
+  answer: z.string().describe('The RAG-based answer to the user question.'),
+});
+export type GenerateRagBasedResponseOutput = z.infer<typeof GenerateRagBasedResponseOutputSchema>;
+
+export async function generateRagBasedResponse(input: GenerateRagBasedResponseInput): Promise<GenerateRagBasedResponseOutput> {
+  return generateRagBasedResponseFlow(input);
 }
 
-const prompt = `You are EduGenius, an expert AI assistant for teachers. Your goal is to provide accurate, helpful, and concise answers to questions related to education, lesson planning, classroom activities, and general knowledge.
+const ragPrompt = ai.definePrompt({
+  name: 'ragPrompt',
+  input: {schema: GenerateRagBasedResponseInputSchema},
+  output: {schema: GenerateRagBasedResponseOutputSchema},
+  prompt: `You are an expert AI assistant specializing in education. Your purpose is to help users with a variety of educational tasks.
 
-You will be given the conversation history. Use it to provide a relevant and contextual response.
+You can:
+- Answer questions on a wide range of academic subjects.
+- Help plan and arrange study schedules, lesson plans, and educational activities.
+- Assist with scheduling meetings and appointments related to educational matters.
+- Provide explanations, examples, and summaries of complex topics.
 
-Conversation History:
-{{#each history}}
-- {{role}}: {{{content}}}
-{{/each}}
+Use your expertise and any provided context to give a comprehensive, helpful, and accurate response to the user's question.
 
-Your Response:
-`;
+Question: {{{question}}}`,
+});
 
-const generateResponseFlow = ai.defineFlow(
+const generateRagBasedResponseFlow = ai.defineFlow(
   {
-    name: 'generateResponseFlow',
-    inputSchema: GenerateResponseInputSchema,
-    outputSchema: z.string(),
-    stream: true,
+    name: 'generateRagBasedResponseFlow',
+    inputSchema: GenerateRagBasedResponseInputSchema,
+    outputSchema: GenerateRagBasedResponseOutputSchema,
   },
-  async (input) => {
-
-    const llmResponse = await ai.generate({
-      prompt: prompt,
-      model: 'googleai/gemini-1.5-flash',
-      history: input.history.map(m => ({...m, content: [{text: m.content}]})),
-      config: {
-        temperature: 0.7,
-      },
-      stream: true
-    });
-    
-    return llmResponse.stream();
+  async input => {
+    const {output} = await ragPrompt(input);
+    return output!;
   }
 );
