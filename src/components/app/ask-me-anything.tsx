@@ -16,7 +16,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Loader2, Mic, X, ThumbsUp, ThumbsDown, RefreshCw, Download, Volume2, Bot, User } from 'lucide-react';
 import { Form } from '@/components/ui/form';
-import { ChatHistorySidebar } from './chat-history-sidebar';
 import { useToast } from '@/hooks/use-toast';
 import { useSpeechToText } from '@/hooks/use-speech-to-text';
 import { useTextToSpeech } from '@/hooks/use-text-to-speech';
@@ -71,6 +70,11 @@ export function AskMeAnything() {
         const parsedChats = savedChats ? (JSON.parse(savedChats) as Chat[]).map(c => ({...c, createdAt: new Date(c.createdAt)})) : [];
         const allChats = [...initialChats, ...parsedChats.filter(pc => !initialChats.some(ic => ic.id === pc.id))];
         setChats(allChats);
+        
+        if (!activeChatId && allChats.length > 0) {
+            const latestChat = allChats.sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
+            setActiveChatId(latestChat.id);
+        }
     } catch(e) {
         setChats(initialChats);
     }
@@ -82,7 +86,7 @@ export function AskMeAnything() {
     } else {
       setMessages([]);
     }
-  }, [activeChatId, setMessages]);
+  }, [activeChatId, setMessages, chats]);
 
 
   useEffect(() => {
@@ -191,24 +195,14 @@ export function AskMeAnything() {
         });
     }
   };
+  
+  if (!activeChatId) {
+    createNewChat();
+  }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[calc(100vh-6rem)]">
-        <ChatHistorySidebar
-            chats={chats}
-            activeChatId={activeChatId}
-            setActiveChatId={setActiveChatId}
-            createNewChat={createNewChat}
-            deleteChat={(chatId) => {
-                setChats(prev => prev.filter(c => c.id !== chatId));
-                if (activeChatId === chatId) {
-                    setActiveChatId(null);
-                    setMessages([]);
-                }
-            }}
-        />
-
-        <div className="md:col-span-3 h-full flex flex-col">
+    <div className="h-[calc(100vh-6rem)] w-full">
+        <div className="h-full flex flex-col">
             <Card className="flex-1 flex flex-col h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>{activeChat?.title ?? 'Ask Me Anything'}</CardTitle>
@@ -242,7 +236,7 @@ export function AskMeAnything() {
                                 <div className="flex items-center gap-2 pt-1">
                                     <Loader2 className="h-5 w-5 animate-spin text-primary" />
                                     <span className="text-sm text-muted-foreground">Thinking...</span>
-                                </div>
+                                d</div>
                             </div>
                         )}
                     </ScrollArea>
