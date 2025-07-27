@@ -173,14 +173,16 @@ export function AskMeAnything() {
                                         <p>{part.text}</p>
                                     </div>
                                 ))}
-                                <div className="flex gap-2 mt-2">
-                                  <Button size="icon" variant="ghost" className="w-6 h-6" onClick={() => play(index.toString(), msg.content[0].text || '')}>
-                                      <Play className={`w-4 h-4 ${currentlyPlaying === index.toString() ? 'text-green-500' : ''}`} />
-                                  </Button>
-                                  <Button size="icon" variant="ghost" className="w-6 h-6">
-                                      <Save className="w-4 h-4" />
-                                  </Button>
-                                </div>
+                                {msg.role === 'model' && (
+                                    <div className="flex gap-2 mt-2">
+                                        <Button size="icon" variant="ghost" className="w-6 h-6" onClick={() => play(index.toString(), msg.content[0].text || '')}>
+                                            <Play className={`w-4 h-4 ${currentlyPlaying === index.toString() ? 'text-green-500' : ''}`} />
+                                        </Button>
+                                        <Button size="icon" variant="ghost" className="w-6 h-6">
+                                            <Save className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                              {msg.role === 'user' && (
                                 <Avatar className="w-8 h-8">
