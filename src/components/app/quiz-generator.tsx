@@ -1,19 +1,41 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import { QuizDashboard } from './quiz-dashboard';
+import { QuizConfiguration } from './quiz-configuration';
+import { QuizPreview } from './quiz-preview';
+import type { GenerateWorksheetOutput } from '@/ai/flows/generate-worksheet';
+
 
 export function QuizGenerator() {
+  const [step, setStep] = useState(1);
+  const [generatedQuiz, setGeneratedQuiz] = useState<GenerateWorksheetOutput | null>(null);
+
+  const handleNextStep = () => setStep(prev => prev + 1);
+  const handlePreviousStep = () => setStep(prev => prev - 1);
+
+  const handleQuizGenerated = (quiz: GenerateWorksheetOutput) => {
+    setGeneratedQuiz(quiz);
+    handleNextStep();
+  }
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return <QuizDashboard onGetStarted={handleNextStep} />;
+      case 2:
+        return <QuizConfiguration onQuizGenerated={handleQuizGenerated} onBack={handlePreviousStep} />;
+      case 3:
+        return <QuizPreview quizData={generatedQuiz} onBack={handlePreviousStep} />;
+      default:
+        return <QuizDashboard onGetStarted={handleNextStep} />;
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Quiz Generator</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col items-center justify-center h-96 border-2 border-dashed rounded-lg">
-            <p className="text-muted-foreground">Quiz Generator Coming Soon</p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="w-full">
+      {renderStep()}
+    </div>
   );
 }
