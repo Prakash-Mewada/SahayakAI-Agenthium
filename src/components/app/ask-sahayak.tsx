@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bot, Loader2, RefreshCw, Sparkles } from 'lucide-react';
+import { Bot, Loader2, RefreshCw, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { handleGenerateResponse, handleSimplifyResponse } from '@/app/actions';
 import { v4 as uuidv4 } from 'uuid';
@@ -22,7 +22,6 @@ export function AskSahayak() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSimplifying, startSimplifying] = useTransition();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -63,17 +62,6 @@ export function AskSahayak() {
       setMessages((prev) => [...prev, aiMessage]);
     }
     setIsLoading(false);
-  };
-
-  const handleSimplify = (messageId: string, textToSimplify: string) => {
-    startSimplifying(async () => {
-        const { simplifiedText, error } = await handleSimplifyResponse({ textToSimplify });
-        if (error || !simplifiedText) {
-            toast({ variant: 'destructive', title: 'Error', description: 'Failed to simplify the response.' });
-            return;
-        }
-        setMessages(prev => prev.map(msg => msg.id === messageId ? {...msg, content: simplifiedText} : msg));
-    });
   };
 
   const clearChat = () => {
@@ -118,14 +106,6 @@ export function AskSahayak() {
                     )}
                     <div className={`rounded-lg px-4 py-2 max-w-[80%] whitespace-pre-wrap ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                         <p>{message.content}</p>
-                        {message.role === 'model' && (
-                            <div className="mt-2 flex justify-end">
-                                <Button size="sm" variant="ghost" onClick={() => handleSimplify(message.id, message.content)} disabled={isSimplifying}>
-                                    {isSimplifying ? <Loader2 className="h-4 w-4 animate-spin"/> : <Sparkles className="h-4 w-4 mr-2"/>}
-                                    Simplify Further
-                                </Button>
-                            </div>
-                        )}
                     </div>
                      {message.role === 'user' && (
                         <Avatar className="h-8 w-8">
@@ -158,8 +138,8 @@ export function AskSahayak() {
             disabled={isLoading}
             autoFocus
           />
-          <Button type="submit" disabled={isLoading || !input.trim()}>
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Ask'}
+          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
         </form>
       </div>
