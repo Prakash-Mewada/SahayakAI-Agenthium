@@ -302,7 +302,7 @@ export function VisualAidCreator() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Card>
                   <CardContent className="p-0">
-                    <Image src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-32mUM3w40ro5T52y5bFBF1rJ/user-wWkS6R6n9a3RKL1xnbg9xIwe/img-9K3p7lIq08qWwY5b4K2o7Z8f.png?st=2024-08-01T00%3A18%3A12Z&se=2024-08-01T02%3A18%3A12Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-07-31T20%3A58%3A58Z&ske=2024-08-01T20%3A58%3A58Z&sks=b&skv=2023-11-03&sig=j8N2mH/J5Z6R7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w" alt="The Water Cycle" width={600} height={400} className="rounded-t-lg" data-ai-hint="science diagram" />
+                    <img src="/src/images/watercycle.jpg" alt="The Water Cycle" width={600} height={400} className="rounded-t-lg" data-ai-hint="science diagram" />
                   </CardContent>
                   <CardFooter className="p-4">
                     <p className="font-medium">The Water Cycle</p>

@@ -21,7 +21,7 @@ const recentQuizzes = [
 ];
 
 export function QuizDashboard({ onGetStarted }: QuizDashboardProps) {
-  const heroImage = "/images/quiztopsection.png";
+  const heroImage = "/src/images/quiztopsection.png";
 
   return (
     <div className="space-y-12">
