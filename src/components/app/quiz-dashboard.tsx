@@ -1,11 +1,15 @@
 
 'use client';
 
+import { useState, useEffect, useTransition } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
+import { handleGenerateImage } from '@/app/actions';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '../ui/skeleton';
 
 interface QuizDashboardProps {
   onGetStarted: () => void;
@@ -18,6 +22,22 @@ const recentQuizzes = [
 ];
 
 export function QuizDashboard({ onGetStarted }: QuizDashboardProps) {
+  const { toast } = useToast();
+  const [heroImage, setHeroImage] = useState<string | null>(null);
+  const [isHeroImageLoading, startHeroImageLoading] = useTransition();
+
+  useEffect(() => {
+    startHeroImageLoading(async () => {
+      const { image, error } = await handleGenerateImage({ prompt: 'An illustration of a vibrant and engaging quiz for students' });
+      if (error) {
+        toast({ variant: 'destructive', title: 'Hero Image Failed', description: error });
+        setHeroImage('https://placehold.co/600x400.png');
+      } else if (image) {
+        setHeroImage(image.imageDataUri);
+      }
+    });
+  }, [toast]);
+
   return (
     <div className="space-y-12">
       <Card className="shadow-lg overflow-hidden">
@@ -32,14 +52,17 @@ export function QuizDashboard({ onGetStarted }: QuizDashboardProps) {
             </Button>
           </div>
           <div className="hidden md:flex items-center justify-center p-8 bg-gray-50">
-            <Image
-              src="https://placehold.co/600x400.png"
-              alt="Quiz illustration"
-              width={600}
-              height={400}
-              className="rounded-lg object-cover"
-              data-ai-hint="quiz illustration"
-            />
+            {isHeroImageLoading || !heroImage ? (
+                <Skeleton className="w-[600px] h-[400px] rounded-lg" />
+            ) : (
+                <Image
+                    src={heroImage}
+                    alt="Quiz illustration"
+                    width={600}
+                    height={400}
+                    className="rounded-lg object-cover"
+                />
+            )}
           </div>
         </div>
       </Card>
