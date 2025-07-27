@@ -95,7 +95,7 @@ export function MainLayout({
             <span className="text-lg font-semibold">Sahayak</span>
           </div>
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent className="mt-4">
           <SidebarMenu>
             {navItems.map((item) => (
               <SidebarMenuItem key={item.slug}>
@@ -114,12 +114,9 @@ export function MainLayout({
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 md:px-6">
+        <header className="sticky top-0 z-10 flex h-14 items-center justify-end border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 md:px-6">
             <div className="flex items-center gap-2">
                 <SidebarTrigger className="md:hidden" />
-                <h1 className="text-lg font-semibold md:text-xl">
-                {pageTitles[activePage]}
-                </h1>
             </div>
             <div className="flex items-center gap-4">
                 <div className="relative">
@@ -129,7 +126,7 @@ export function MainLayout({
                 <div className="relative">
                     <Button variant="ghost" size="icon" className="rounded-full">
                         <Bell className="h-5 w-5" />
-                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">3</span>
+                        <span className="absolute top-1 right-1 inline-flex h-3 w-3 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">3</span>
                     </Button>
                 </div>
                 <Avatar className="h-9 w-9">
