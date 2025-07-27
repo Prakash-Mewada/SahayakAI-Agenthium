@@ -53,15 +53,6 @@ const navItems: {
   { slug: 'library', href: '/library', icon: <Library />, label: 'Content Library' },
 ];
 
-const pageTitles: Record<PageSlug, string> = {
-    'create-content': 'AI Content Creation',
-    'worksheet': 'Worksheet Generator',
-    'quiz': 'Quiz Generator',
-    'visual-aid': 'Visual Aid Creator',
-    'ask-me-anything': 'Ask Me Anything',
-    'library': 'Content Library'
-}
-
 export function MainLayout({
   children,
   activePage,
@@ -87,7 +78,7 @@ export function MainLayout({
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarHeader>
+        <SidebarHeader className="justify-center">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <GraduationCap className="h-5 w-5" />
@@ -96,13 +87,14 @@ export function MainLayout({
           </div>
         </SidebarHeader>
         <SidebarContent className="mt-4">
-          <SidebarMenu>
+          <SidebarMenu className="space-y-2 p-2">
             {navItems.map((item) => (
               <SidebarMenuItem key={item.slug}>
                 <Link href={item.href} passHref legacyBehavior>
                     <SidebarMenuButton
                         onClick={() => handleNavigation(item.href)}
                         isActive={activePage === item.slug}
+                        className="p-3"
                     >
                         {item.icon}
                         {item.label}
