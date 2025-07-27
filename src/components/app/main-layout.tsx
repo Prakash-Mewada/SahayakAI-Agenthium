@@ -48,13 +48,14 @@ const navItems: {
   href: string;
   icon: React.ReactNode;
   label: string;
+  isExternal?: boolean;
 }[] = [
   { slug: 'create-content', href: '/', icon: <BotMessageSquare />, label: 'Create Content' },
   { slug: 'worksheet', href: '/worksheet', icon: <ClipboardList />, label: 'Worksheet Generator' },
   { slug: 'quiz', href: '/quiz', icon: <ClipboardCheck />, label: 'Quiz Generator' },
   { slug: 'visual-aid', href: '/visual-aid', icon: <Image />, label: 'Visual Aid Creator' },
   { slug: 'ask-sahayak', href: '/ask-sahayak', icon: <HelpCircle />, label: 'Ask Sahayak' },
-  { slug: 'whatsapp-chat', href: '/whatsapp-chat', icon: <MessageCircle />, label: 'WhatsApp Chat' },
+  { slug: 'whatsapp-chat', href: 'https://web.whatsapp.com/', icon: <MessageCircle />, label: 'WhatsApp Chat', isExternal: true },
 ];
 
 const libraryItem = { slug: 'library' as PageSlug, href: '/library', icon: <Library />, label: 'Content Library' };
@@ -118,10 +119,12 @@ export function MainLayout({
             {navItems.map((item) => (
               <SidebarMenuItem key={item.slug}>
                 <SidebarMenuButton
-                    onClick={() => handleNavigation(item.href)}
+                    onClick={() => !item.isExternal && handleNavigation(item.href)}
                     isActive={activePage === item.slug}
                     className="p-4"
                     href={item.href}
+                    target={item.isExternal ? '_blank' : undefined}
+                    rel={item.isExternal ? 'noopener noreferrer' : undefined}
                 >
                     {item.icon}
                     {item.label}
