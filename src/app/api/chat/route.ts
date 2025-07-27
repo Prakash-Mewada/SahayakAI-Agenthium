@@ -13,8 +13,9 @@ export async function POST(req: Request) {
     return new StreamingTextResponse(stream);
 
   } catch (error: any) {
+    const message = error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(
-        `## Error\n\n\`\`\`\n${error.message}\n\`\`\``,
+        `## Error\n\n\`\`\`\n${message}\n\`\`\``,
         {
           status: 500,
           headers: {
