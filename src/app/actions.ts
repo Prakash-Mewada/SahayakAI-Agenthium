@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -30,8 +31,6 @@ import {
     type RefineVisualAidOutput,
 } from '@/ai/flows/refine-visual-aid';
 import htmlToDocx from 'html-to-docx';
-import { adjustAnswer, type AdjustAnswerInput } from '@/ai/flows/adjust-answer';
-import type { Message } from '@/types';
 import { generateImage, type GenerateImageInput, type GenerateImageOutput } from '@/ai/flows/generate-image';
 
 
@@ -167,29 +166,6 @@ export async function handleRefineVisualAid(
         e instanceof Error ? e.message : 'An unknown error occurred.';
       return { error: errorMessage };
     }
-}
-
-export async function handleAdjustAnswer(
-    input: AdjustAnswerInput
-): Promise<{ adjustedAnswer?: string, error?: string }> {
-    try {
-        const { adjustedAnswer } = await adjustAnswer(input);
-        return { adjustedAnswer };
-    } catch(e) {
-        const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
-        return { error: errorMessage };
-    }
-}
-
-export const getResponse = async (messages: Message[]) => {
-    const res = await fetch('/api/chat', {
-        method: 'POST',
-        body: JSON.stringify({ messages }),
-    });
-    if (!res.ok) {
-        throw new Error(await res.text())
-    }
-    return res.body;
 }
 
 export async function handleGenerateImage(

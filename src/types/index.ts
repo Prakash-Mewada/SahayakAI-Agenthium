@@ -1,15 +1,2 @@
-export interface Message {
-    id: string;
-    role: 'user' | 'assistant';
-    content: string;
-    isAdjusted?: boolean;
-    feedback?: 'good' | 'bad' | null;
-  }
-  
-  export interface Chat {
-    id: string;
-    title: string;
-    messages: Message[];
-    createdAt: Date;
-  }
-  
+
+// This file is intentionally blank after removing the Ask Me Anything feature.
