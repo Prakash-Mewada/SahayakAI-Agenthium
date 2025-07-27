@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
@@ -266,24 +267,48 @@ export function VisualAidCreator() {
     switch (currentStep) {
       case 1:
         return (
-          <Form {...form}>
-            <Card className="w-full max-w-2xl mx-auto">
-              <CardHeader>
-                <CardTitle>Create a New Visual Aid</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="mb-6 text-muted-foreground">
+          <div className="w-full">
+            <div className="relative mb-8 h-64 w-full rounded-lg bg-cover bg-center" style={{backgroundImage: "url('https://placehold.co/1200x400.png')"}} data-ai-hint="design creative">
+              <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col items-center justify-center text-center text-white p-4">
+                <h1 className="text-4xl font-bold">Create a New Visual Aid</h1>
+                <p className="mt-2 max-w-2xl">
                   Generate high-quality diagrams, infographics, charts, and presentations from your educational content using the power of AI.
                 </p>
-                <Button size="lg" onClick={() => setCurrentStep(2)}>Get Started</Button>
-              </CardContent>
-              <CardFooter>
-                  <h3 className="text-lg font-semibold w-full text-left">Recent Creations</h3>
-                  {/* Placeholder for recent creations */}
-                  <div className="mt-4 text-sm text-muted-foreground">No recent creations yet.</div>
-              </CardFooter>
-            </Card>
-          </Form>
+                <Button size="lg" onClick={() => setCurrentStep(2)} className="mt-6">
+                  Get Started
+                </Button>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-2xl font-semibold mb-4">Recent Creations</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Card>
+                  <CardContent className="p-0">
+                    <Image src="https://placehold.co/600x400.png" alt="Recent creation 1" width={600} height={400} className="rounded-t-lg" data-ai-hint="science diagram" />
+                  </CardContent>
+                  <CardFooter className="p-4">
+                    <p className="font-medium">The Water Cycle</p>
+                  </CardFooter>
+                </Card>
+                <Card>
+                  <CardContent className="p-0">
+                    <Image src="https://placehold.co/600x400.png" alt="Recent creation 2" width={600} height={400} className="rounded-t-lg" data-ai-hint="history infographic" />
+                  </CardContent>
+                  <CardFooter className="p-4">
+                    <p className="font-medium">Ancient Rome Timeline</p>
+                  </CardFooter>
+                </Card>
+                <Card>
+                  <CardContent className="p-0">
+                    <Image src="https://placehold.co/600x400.png" alt="Recent creation 3" width={600} height={400} className="rounded-t-lg" data-ai-hint="math chart" />
+                  </CardContent>
+                  <CardFooter className="p-4">
+                    <p className="font-medium">Photosynthesis Diagram</p>
+                  </CardFooter>
+                </Card>
+              </div>
+            </div>
+          </div>
         );
       case 2:
         return (

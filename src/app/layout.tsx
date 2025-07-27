@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: 'Sahayak',
-  description: 'AI-powered content generation for teachers',
+  description: 'AI-powered assistant for teachers',
 };
 
 export default function RootLayout({
