@@ -6,9 +6,9 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
   try {
-    const { history, imageDataUri } = await req.json() as GenerateRagBasedResponseInput;
+    const { history } = await req.json() as GenerateRagBasedResponseInput;
     
-    const response = await generateRagBasedResponse({ history, imageDataUri });
+    const response = await generateRagBasedResponse({ history });
 
     return new Response(JSON.stringify(response), {
         headers: { 'Content-Type': 'application/json' },

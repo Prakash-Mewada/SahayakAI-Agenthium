@@ -31,15 +31,20 @@ declare global {
     }
 }
 
-async function handleGenerateResponse(messages: Message[], imageDataUri?: string): Promise<GenerateRagBasedResponseOutput> {
+async function handleGenerateResponse(messages: Message[]): Promise<GenerateRagBasedResponseOutput> {
     const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ history: messages, imageDataUri }),
+        body: JSON.stringify({ history: messages }),
     });
     if (!res.ok) {
-        const errorBody = await res.json();
-        throw new Error(errorBody.error || 'An unknown error occurred');
+        const errorBody = await res.text();
+        try {
+            const errorJson = JSON.parse(errorBody);
+            throw new Error(errorJson.error || 'An unknown error occurred');
+        } catch (e) {
+            throw new Error(errorBody || 'An unknown error occurred');
+        }
     }
     return res.json();
 }
@@ -116,7 +121,7 @@ export function AskMeAnything() {
     e.preventDefault();
     if (!input.trim() && !imageDataUri) return;
 
-    const newUserMessage: Message = { role: 'user', content: [{ text: input, ...(imageDataUri && { media: { url: imageDataUri }}) }] };
+    const newUserMessage: Message = { role: 'user', content: [{ text: input }] };
     const currentMessages = [...messages, newUserMessage];
     setMessages(currentMessages);
     setInput('');
@@ -125,7 +130,7 @@ export function AskMeAnything() {
 
     setIsLoading(true);
     try {
-        const result = await handleGenerateResponse(currentMessages, imageDataUri);
+        const result = await handleGenerateResponse(currentMessages);
         setMessages(prev => [...prev, { role: 'model', content: [{ text: result.answer }] }]);
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
@@ -155,8 +160,7 @@ export function AskMeAnything() {
                             <div className={`p-3 rounded-lg max-w-lg ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                                 {msg.content.map((part, i) => (
                                     <div key={i}>
-                                        {part.media && <Image src={part.media.url} alt="User upload" width={200} height={200} className="rounded-md mb-2" />}
-                                        <p>{part.text}</p>
+                                        {part.text && <p>{part.text}</p>}
                                     </div>
                                 ))}
                                 {msg.role === 'model' && (
