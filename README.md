@@ -1,11 +1,12 @@
 # 🚀 Agenthium
-Our team is on a mission to create inclusive, AI-powered tools that uplift educators in underserved communities. Inspired by the word "Agent" (a force for action) and "Ethium" (symbolizing ethics and impact), Agenthium stands for purposeful innovation—where technology serves, supports, and scales human potential.
+Our team is on a mission to create inclusive, AI-powered tools that uplift educators in underserved communities. Inspired by the word "Agent" (a force for action) and "Ethium" (symbolizing ethics and impact), Agenthium stands for purposeful innovation—where technology serves, supports, and scales human potential.<br/>
 🧠 Integrates Google Gemini AI • ✨ Built with Shadcn UI & Tailwind CSS • 🔥 Hosted on Firebase Studio
 
 <hr/>
 
 # 📦 Project Structure
 
+<pre>
 src/
 ├── ai/             # AI flows using Gemini
 │   └── flows/
@@ -19,6 +20,7 @@ src/
 ├── lib/            # Utilities & helpers
 ├── services/       # API & backend services
 └── types/          # Global TypeScript types
+</pre>
 
 <hr/>
 
