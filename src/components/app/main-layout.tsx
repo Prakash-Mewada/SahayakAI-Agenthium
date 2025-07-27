@@ -14,6 +14,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import {
   GraduationCap,
@@ -50,8 +51,9 @@ const navItems: {
   { slug: 'quiz', href: '/quiz', icon: <ClipboardCheck />, label: 'Quiz Generator' },
   { slug: 'visual-aid', href: '/visual-aid', icon: <Image />, label: 'Visual Aid Creator' },
   { slug: 'ask-me-anything', href: '/ask-me-anything', icon: <HelpCircle />, label: 'Ask Me Anything' },
-  { slug: 'library', href: '/library', icon: <Library />, label: 'Content Library' },
 ];
+
+const libraryItem = { slug: 'library' as PageSlug, href: '/library', icon: <Library />, label: 'Content Library' };
 
 export function MainLayout({
   children,
@@ -64,8 +66,6 @@ export function MainLayout({
   const [isNavigating, setIsNavigating] = React.useState(false);
 
   React.useEffect(() => {
-    // This component is a trick to reset the navigating state.
-    // When a page is loaded, this component is rendered and isNavigating is set to false.
     setIsNavigating(false);
   }, [pathname]);
 
@@ -78,7 +78,7 @@ export function MainLayout({
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarHeader className="justify-center">
+        <SidebarHeader className="justify-center mt-4">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <GraduationCap className="h-5 w-5" />
@@ -86,25 +86,38 @@ export function MainLayout({
             <span className="text-lg font-semibold">Sahayak</span>
           </div>
         </SidebarHeader>
-        <SidebarContent className="mt-4">
+        <SidebarContent className="mt-8">
           <SidebarMenu className="space-y-2 p-2">
             {navItems.map((item) => (
               <SidebarMenuItem key={item.slug}>
                 <SidebarMenuButton
-                    asChild
                     onClick={() => handleNavigation(item.href)}
                     isActive={activePage === item.slug}
-                    className="p-3"
+                    className="p-4"
+                    href={item.href}
                 >
-                    <Link href={item.href}>
-                        {item.icon}
-                        {item.label}
-                    </Link>
+                    {item.icon}
+                    {item.label}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
         </SidebarContent>
+        <SidebarFooter className="mt-auto p-2 mb-4">
+             <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton
+                        onClick={() => handleNavigation(libraryItem.href)}
+                        isActive={activePage === libraryItem.slug}
+                        className="p-4"
+                        href={libraryItem.href}
+                    >
+                        {libraryItem.icon}
+                        {libraryItem.label}
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+             </SidebarMenu>
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-14 items-center justify-end border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 md:px-6">
@@ -119,7 +132,7 @@ export function MainLayout({
                 <div className="relative">
                     <Button variant="ghost" size="icon" className="rounded-full">
                         <Bell className="h-5 w-5" />
-                        <span className="absolute top-1 right-1 inline-flex h-3 w-3 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">3</span>
+                        <span className="absolute top-1.5 right-1.5 inline-flex h-2 w-2 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white"></span>
                     </Button>
                 </div>
                 <Avatar className="h-9 w-9">

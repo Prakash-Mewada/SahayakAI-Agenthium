@@ -73,7 +73,7 @@ export function QuizPreview({ quizData, onBack }: QuizPreviewProps) {
       <div className="lg:col-span-2">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-2xl">{quizData.title}</CardTitle>
+            <CardTitle className="text-2xl">Quiz Preview</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="border rounded-lg overflow-hidden">

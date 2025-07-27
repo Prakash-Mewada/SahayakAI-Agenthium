@@ -13,7 +13,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Mic, Upload, ArrowLeft } from 'lucide-react';
@@ -136,12 +135,14 @@ export function QuizConfiguration({ onQuizGenerated, onBack }: QuizConfiguration
                 name="questionCount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Questions: {field.value}</FormLabel>
+                    <FormLabel>Number of Questions</FormLabel>
                     <FormControl>
-                      <Slider
-                        min={1} max={20} step={1}
-                        defaultValue={[field.value]}
-                        onValueChange={(value) => field.onChange(value[0])}
+                      <Input
+                        type="number"
+                        min={1}
+                        max={20}
+                        {...field}
+                        onChange={e => field.onChange(parseInt(e.target.value, 10))}
                       />
                     </FormControl>
                   </FormItem>
