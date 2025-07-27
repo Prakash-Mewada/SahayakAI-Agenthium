@@ -55,7 +55,7 @@ const navItems: {
   { slug: 'quiz', href: '/quiz', icon: <ClipboardCheck />, label: 'Quiz Generator' },
   { slug: 'visual-aid', href: '/visual-aid', icon: <Image />, label: 'Visual Aid Creator' },
   { slug: 'ask-sahayak', href: '/ask-sahayak', icon: <HelpCircle />, label: 'Ask Sahayak' },
-  { slug: 'whatsapp-chat', href: 'https://web.whatsapp.com/', icon: <MessageCircle />, label: 'WhatsApp Chat', isExternal: true },
+  { slug: 'whatsapp-chat', href: 'https://platform-flow-5163--dev.sandbox.my.salesforce-sites.com/', icon: <MessageCircle />, label: 'WhatsApp Chat', isExternal: true },
 ];
 
 const libraryItem = { slug: 'library' as PageSlug, href: '/library', icon: <Library />, label: 'Content Library' };
