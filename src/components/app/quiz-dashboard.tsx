@@ -21,7 +21,7 @@ const recentQuizzes = [
 ];
 
 export function QuizDashboard({ onGetStarted }: QuizDashboardProps) {
-  const heroImage = "data:image/webp;base64,UklGRsoKAABXRUJQVlA4WAoAAAAgAAAA/wAAvgAAVlA4ILoJAAAwNgCdASoAAMAA+EUit1EnIqGgpxgJgB5pJaQAy34c0Gz7B/7v/9/lH4b/pPqA/zj+d/bL5gf6J/ifYA/lP8i9QD/L/3r3Af53+8/4r9/P+B/dv+r/yP/b8AH8s/t3/V/u3/I/3H7gP9R/j/9n+8n+9/1H9n/AD/S/3r/qf4b/df+5/if/N/eP+n/yP/x/cv9N61ftV/r/8H9yP7x6s/mf/r/4v8Z/uX5K/z3/E/2X+F/5b/qP7f/bf6nf7n/u/gJ/o//1/9v4Ef4v/Pf6b/Uf5v/tf+P/ef+x/d/7n////9+AH+Vf5n/yf+T/hv/N/df+z/mP/////9gB/6T/K/7T/J//X/mP+j////+6nf//+hH7//6X/////+6nf//+n/////+8H+if6v+8/8r+zf53////+6m///+wH+/f6n+8/+f/hv+L/////+9X///5gH7x/tv/r/4X/9f8X/////+wR/iP8j/ff+P/8/8t/////+sl///9gP7v/tv/j/3//9/lP///+wR/ev+B/uP/L/8/+c/////+u////5g";
+  const heroImage = "/images/quiztopsection.png";
 
   return (
     <div className="space-y-12">
