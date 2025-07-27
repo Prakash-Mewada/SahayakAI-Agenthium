@@ -90,16 +90,17 @@ export function MainLayout({
           <SidebarMenu className="space-y-2 p-2">
             {navItems.map((item) => (
               <SidebarMenuItem key={item.slug}>
-                <Link href={item.href} passHref legacyBehavior>
-                    <SidebarMenuButton
-                        onClick={() => handleNavigation(item.href)}
-                        isActive={activePage === item.slug}
-                        className="p-3"
-                    >
+                <SidebarMenuButton
+                    asChild
+                    onClick={() => handleNavigation(item.href)}
+                    isActive={activePage === item.slug}
+                    className="p-3"
+                >
+                    <Link href={item.href}>
                         {item.icon}
                         {item.label}
-                    </SidebarMenuButton>
-                </Link>
+                    </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
