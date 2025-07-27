@@ -64,10 +64,9 @@ const generateRagBasedResponseFlow = ai.defineFlow(
             `You are an expert AI assistant for teachers called "Sahayak". Your goal is to provide concise, accurate, and teacher-friendly answers.`,
             `Use the following retrieved context to answer the user's question. If the context is not relevant, rely on your general knowledge but mention that the provided context was not applicable.`,
             `\n---\nRetrieved Context:\n${context}\n---\n`,
-            `\n---\nConversation History:\n`,
-            ...input.history.map(msg => `${msg.role}: ${msg.content.map(c => c.text || '(image)').join(' ')}`),
+            `User's question: "${userQuery}"`,
             `\n---\n`,
-            `Based on the context and history, provide a summarized answer to the last user message.`
+            `Based on the context, provide a summarized answer to the user's question.`
         ];
         
         const llmResponse = await ai.generate({
