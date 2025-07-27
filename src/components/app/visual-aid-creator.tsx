@@ -302,7 +302,7 @@ export function VisualAidCreator() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Card>
                   <CardContent className="p-0">
-                    <img src="/src/images/watercycle.jpg" alt="The Water Cycle" width={600} height={400} className="rounded-t-lg" data-ai-hint="science diagram" />
+                    <img src="/images/watercycle.jpg" alt="The Water Cycle" width={600} height={400} className="rounded-t-lg" data-ai-hint="science diagram" />
                   </CardContent>
                   <CardFooter className="p-4">
                     <p className="font-medium">The Water Cycle</p>

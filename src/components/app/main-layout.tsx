@@ -4,6 +4,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   SidebarProvider,
   Sidebar,
@@ -26,6 +27,7 @@ import {
   HelpCircle,
   Search,
   Bell,
+  MessageCircle,
 } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -38,7 +40,8 @@ type PageSlug =
   | 'quiz'
   | 'visual-aid'
   | 'library'
-  | 'ask-sahayak';
+  | 'ask-sahayak'
+  | 'whatsapp-chat';
 
 const navItems: {
   slug: PageSlug;
@@ -51,6 +54,7 @@ const navItems: {
   { slug: 'quiz', href: '/quiz', icon: <ClipboardCheck />, label: 'Quiz Generator' },
   { slug: 'visual-aid', href: '/visual-aid', icon: <Image />, label: 'Visual Aid Creator' },
   { slug: 'ask-sahayak', href: '/ask-sahayak', icon: <HelpCircle />, label: 'Ask Sahayak' },
+  { slug: 'whatsapp-chat', href: '/whatsapp-chat', icon: <MessageCircle />, label: 'WhatsApp Chat' },
 ];
 
 const libraryItem = { slug: 'library' as PageSlug, href: '/library', icon: <Library />, label: 'Content Library' };
@@ -63,6 +67,7 @@ export function MainLayout({
   activePage: PageSlug;
 }) {
   const pathname = usePathname();
+  const [isOnline, setIsOnline] = useState(false);
   const [isNavigating, setIsNavigating] = React.useState(false);
 
   React.useEffect(() => {
@@ -74,6 +79,28 @@ export function MainLayout({
         setIsNavigating(true);
     }
   };
+
+  useEffect(() => {
+    // Function to check connectivity status
+    const checkOnlineStatus = () => {
+      setIsOnline(navigator.onLine);
+      if (!navigator.onLine && window.location.pathname !== '/saved-library') {
+        const savedLibraryElement = document.querySelectorAll('.menu-item');
+        console.log('Offline mode',savedLibraryElement);
+        // window.location.href = '/saved-library';
+      }
+    };
+
+    // Initial check
+    checkOnlineStatus();
+
+    // Set interval to check every 5 seconds (5000 ms)
+    const intervalId = setInterval(checkOnlineStatus, 5000);
+
+    return () => {
+      clearInterval(intervalId); // Cleanup on unmount
+    };
+  }, []);
 
   return (
     <SidebarProvider>
@@ -118,6 +145,25 @@ export function MainLayout({
                 </SidebarMenuItem>
              </SidebarMenu>
         </SidebarFooter>
+        <div className="p-4 border-t border-gray-100">
+          <div className="flex items-center justify-center mb-4">
+            <div className="flex items-center">
+              <span className="relative flex size-3 mr-2">
+                <span className={`absolute inline-flex h-full w-full opacity-75 rounded-full ${isOnline ? 'bg-green-400 animate-ping' : 'bg-red-400'}`}></span>
+                <span className={`relative inline-flex size-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`}></span>
+              </span>
+              <span className="text-sm text-gray-600">
+                {isOnline ? 'Online & Synced' : 'Offline Mode'}
+              </span>
+            </div>
+          </div>
+          <div className="text-xs text-gray-400 text-center">
+            Made with <Link
+                  href="/our-team"
+                  className="cursor-pointer"
+                ><span className="text-violet-500 hover:underline">Agenthium</span></Link>
+          </div>
+        </div>
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-14 items-center justify-end border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 md:px-6">
