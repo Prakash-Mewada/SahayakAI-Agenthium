@@ -2,7 +2,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { streamFlow } from '@genkit-ai/next';
+import { streamFlow } from '@genkit-ai/next/server';
 
 const GenerateResponseInputSchema = z.object({
   history: z.array(
@@ -35,6 +35,7 @@ const generateResponseFlow = ai.defineFlow(
     name: 'generateResponseFlow',
     inputSchema: GenerateResponseInputSchema,
     outputSchema: z.string(),
+    stream: true,
   },
   async (input) => {
 

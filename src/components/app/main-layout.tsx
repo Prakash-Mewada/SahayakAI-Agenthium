@@ -78,7 +78,7 @@ export function MainLayout({
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarHeader className="justify-center mt-4">
+        <SidebarHeader className="justify-center">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <GraduationCap className="h-5 w-5" />
