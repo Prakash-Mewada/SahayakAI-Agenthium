@@ -2,7 +2,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { streamFlow } from 'genkit/next';
+import { streamFlow } from '@genkit-ai/next';
 
 const GenerateResponseInputSchema = z.object({
   history: z.array(
