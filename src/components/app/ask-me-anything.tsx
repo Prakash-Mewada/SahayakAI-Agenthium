@@ -49,15 +49,6 @@ async function handleGenerateResponse(messages: Message[]): Promise<GenerateRagB
     return res.json();
 }
 
-function formatContent(text: string) {
-    let html = text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    html = html.replace(/\n/g, '<br />');
-  
-    return html;
-}
-
 export function AskMeAnything() {
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -170,11 +161,7 @@ export function AskMeAnything() {
                                 {msg.content.map((part, i) => (
                                     <div key={i}>
                                         {part.text && (
-                                            msg.role === 'model' ? (
-                                                <div dangerouslySetInnerHTML={{ __html: formatContent(part.text) }} />
-                                            ) : (
-                                                <p>{part.text}</p>
-                                            )
+                                            <p className="whitespace-pre-wrap">{part.text}</p>
                                         )}
                                     </div>
                                 ))}
