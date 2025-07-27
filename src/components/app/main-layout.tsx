@@ -38,7 +38,7 @@ type PageSlug =
   | 'quiz'
   | 'visual-aid'
   | 'library'
-  | 'ask-me-anything';
+  | 'ask-sahayak';
 
 const navItems: {
   slug: PageSlug;
@@ -50,6 +50,7 @@ const navItems: {
   { slug: 'worksheet', href: '/worksheet', icon: <ClipboardList />, label: 'Worksheet Generator' },
   { slug: 'quiz', href: '/quiz', icon: <ClipboardCheck />, label: 'Quiz Generator' },
   { slug: 'visual-aid', href: '/visual-aid', icon: <Image />, label: 'Visual Aid Creator' },
+  { slug: 'ask-sahayak', href: '/ask-sahayak', icon: <HelpCircle />, label: 'Ask Sahayak' },
 ];
 
 const libraryItem = { slug: 'library' as PageSlug, href: '/library', icon: <Library />, label: 'Content Library' };

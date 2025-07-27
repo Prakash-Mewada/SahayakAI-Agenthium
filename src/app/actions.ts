@@ -32,6 +32,8 @@ import {
 } from '@/ai/flows/refine-visual-aid';
 import htmlToDocx from 'html-to-docx';
 import { generateImage, type GenerateImageInput, type GenerateImageOutput } from '@/ai/flows/generate-image';
+import { generateResponse, type GenerateResponseInput } from '@/ai/flows/generate-response';
+import { simplifyResponse, type SimplifyResponseInput } from '@/ai/flows/simplify-response';
 
 
 const formSchema = z.object({
@@ -179,4 +181,30 @@ export async function handleGenerateImage(
       e instanceof Error ? e.message : 'An unknown error occurred.';
     return { error: errorMessage };
   }
+}
+
+export async function handleGenerateResponse(
+    input: GenerateResponseInput
+  ): Promise<{ answer?: string; error?: string }> {
+    try {
+      const { answer } = await generateResponse(input);
+      return { answer };
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : 'An unknown error occurred.';
+      return { error: errorMessage };
+    }
+}
+
+export async function handleSimplifyResponse(
+    input: SimplifyResponseInput
+  ): Promise<{ simplifiedText?: string; error?: string }> {
+    try {
+      const { simplifiedText } = await simplifyResponse(input);
+      return { simplifiedText };
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : 'An unknown error occurred.';
+      return { error: errorMessage };
+    }
 }
