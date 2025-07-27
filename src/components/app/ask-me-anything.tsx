@@ -12,6 +12,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useTextToSpeech } from '@/hooks/use-text-to-speech';
 import type { GenerateRagBasedResponseOutput, Message } from '@/ai/flows/generate-rag-response';
+import { Input } from '@/components/ui/input';
 
 interface SpeechRecognition extends EventTarget {
     continuous: boolean;
