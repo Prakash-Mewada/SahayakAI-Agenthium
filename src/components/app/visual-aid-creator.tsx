@@ -268,7 +268,7 @@ export function VisualAidCreator() {
       case 1:
         return (
           <div className="w-full">
-            <div className="relative mb-8 h-64 w-full rounded-lg bg-cover bg-center" style={{backgroundImage: "url('https://placehold.co/1200x400.png')"}} data-ai-hint="design creative">
+            <div className="relative mb-8 h-64 w-full rounded-lg bg-cover bg-center" style={{backgroundImage: "url('https://oaidalleapiprodscus.blob.core.windows.net/private/org-32mUM3w40ro5T52y5bFBF1rJ/user-wWkS6R6n9a3RKL1xnbg9xIwe/img-Lq0s9w1NqYyTzR2aH3E4iG2X.png?st=2024-07-30T22%3A05%3A22Z&se=2024-07-31T00%3A05%3A22Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-07-30T21%3A26%3A33Z&ske=2024-07-31T21%3A26%3A33Z&sks=b&skv=2023-11-03&sig=iS/zXyWqXmOa9Z/j5L4E1h8S/rD4E8N8o9N5yW/p8Hw%3D')"}} data-ai-hint="design creative">
               <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col items-center justify-center text-center text-white p-4">
                 <h1 className="text-4xl font-bold">Create a New Visual Aid</h1>
                 <p className="mt-2 max-w-2xl">
@@ -284,7 +284,7 @@ export function VisualAidCreator() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Card>
                   <CardContent className="p-0">
-                    <Image src="https://placehold.co/600x400.png" alt="Recent creation 1" width={600} height={400} className="rounded-t-lg" data-ai-hint="science diagram" />
+                    <Image src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-32mUM3w40ro5T52y5bFBF1rJ/user-wWkS6R6n9a3RKL1xnbg9xIwe/img-E3v3f7s4s6zH4yX1b5R9r6Xy.png?st=2024-07-30T22%3A05%3A46Z&se=2024-07-31T00%3A05%3A46Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-07-30T21%3A26%3A33Z&ske=2024-07-31T21%3A26%3A33Z&sks=b&skv=2023-11-03&sig=3g3P6hL1z6B6f6l7k2lJ5R/p5wO4Z/t9yU5m7n5P0YI%3D" alt="Recent creation 1" width={600} height={400} className="rounded-t-lg" data-ai-hint="science diagram" />
                   </CardContent>
                   <CardFooter className="p-4">
                     <p className="font-medium">The Water Cycle</p>
@@ -292,7 +292,7 @@ export function VisualAidCreator() {
                 </Card>
                 <Card>
                   <CardContent className="p-0">
-                    <Image src="https://placehold.co/600x400.png" alt="Recent creation 2" width={600} height={400} className="rounded-t-lg" data-ai-hint="history infographic" />
+                    <Image src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-32mUM3w40ro5T52y5bFBF1rJ/user-wWkS6R6n9a3RKL1xnbg9xIwe/img-s9k7R3Q5X6b1Z2x0A4c8d5V.png?st=2024-07-30T22%3A06%3A10Z&se=2024-07-31T00%3A06%3A10Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-07-30T21%3A26%3A33Z&ske=2024-07-31T21%3A26%3A33Z&sks=b&skv=2023-11-03&sig=P3Y8w7t4U/L7s7j5l4N2o/z6V9e3r8m0b1X2k8J6a4I%3D" alt="Recent creation 2" width={600} height={400} className="rounded-t-lg" data-ai-hint="history infographic" />
                   </CardContent>
                   <CardFooter className="p-4">
                     <p className="font-medium">Ancient Rome Timeline</p>
@@ -300,7 +300,7 @@ export function VisualAidCreator() {
                 </Card>
                 <Card>
                   <CardContent className="p-0">
-                    <Image src="https://placehold.co/600x400.png" alt="Recent creation 3" width={600} height={400} className="rounded-t-lg" data-ai-hint="math chart" />
+                    <Image src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-32mUM3w40ro5T52y5bFBF1rJ/user-wWkS6R6n9a3RKL1xnbg9xIwe/img-C4e5F6g7H8i9J0k1l2M3n4O.png?st=2024-07-30T22%3A06%3A32Z&se=2024-07-31T00%3A06%3A32Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-07-30T21%3A26%3A33Z&ske=2024-07-31T21%3A26%3A33Z&sks=b&skv=2023-11-03&sig=h3S4g5f6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2x3y4z" alt="Recent creation 3" width={600} height={400} className="rounded-t-lg" data-ai-hint="math chart" />
                   </CardContent>
                   <CardFooter className="p-4">
                     <p className="font-medium">Photosynthesis Diagram</p>
